@@ -71,6 +71,9 @@
     "fig/link-util": {
         "version": "1.0.0"
     },
+    "friendsofsymfony/user-bundle": {
+        "version": "v2.1.2"
+    },
     "jdorn/sql-formatter": {
         "version": "v1.2.17"
     },
@@ -82,6 +85,9 @@
     },
     "ocramius/proxy-manager": {
         "version": "2.2.0"
+    },
+    "paragonie/random_compat": {
+        "version": "v2.0.12"
     },
     "phpdocumentor/reflection-common": {
         "version": "1.0.1"
@@ -106,6 +112,9 @@
     },
     "psr/simple-cache": {
         "version": "1.0.1"
+    },
+    "roave/security-advisories": {
+        "version": "dev-master"
     },
     "sensio/framework-extra-bundle": {
         "version": "4.0",
@@ -313,6 +322,9 @@
             "version": "2.5",
             "ref": "3db029c03e452b4a23f7fc45cec7c922c2247eb8"
         }
+    },
+    "symfony/templating": {
+        "version": "v4.0.9"
     },
     "symfony/translation": {
         "version": "3.3",

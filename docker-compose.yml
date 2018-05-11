@@ -1,0 +1,24 @@
+version: '3'
+services:
+  web:
+    build:
+      context: ./env/docker/nginx
+    ports:
+      - '80:80'
+    volumes:
+      - ./:/var/www/vsapi
+    depends_on:
+      - php
+  php:
+    build:
+      context: ./env/docker/php7-fpm
+    volumes:
+      - ./:/var/www/vsapi
+    depends_on:
+    - db
+  db:
+    image: mysql:8
+    expose:
+      - '3306:3306'
+    env_file:
+    - ./env/docker/mysql/.env
