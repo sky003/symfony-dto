@@ -1,24 +1,49 @@
 security:
+
+    encoders:
+      FOS\UserBundle\Model\UserInterface: bcrypt
+
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     providers:
-        in_memory: { memory: ~ }
+        fos_userbundle:
+            id: fos_user.user_provider.username_email
+
     firewalls:
+
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
-        main:
+
+        api_registration:
+            pattern: ^/security/registration
             anonymous: true
 
-            # activate different ways to authenticate
+        api_password_reset:
+            pattern: ^/security/password-reset
+            anonymous: true
 
-            # http_basic: true
-            # https://symfony.com/doc/current/security.html#a-configuring-how-your-users-will-authenticate
+        api_authentication:
+            pattern: ^/security/authentication
+            stateless: true
+            anonymous: true
+            form_login:
+                check_path: /security/authentication
+                require_previous_session: false
+                username_parameter: email
+                password_parameter: password
+                success_handler: lexik_jwt_authentication.handler.authentication_success
+                failure_handler: lexik_jwt_authentication.handler.authentication_failure
+            logout: true
 
-            # form_login: true
-            # https://symfony.com/doc/current/security/form_login_setup.html
+        api:
+            pattern: ^/
+            stateless: true
+            lexik_jwt: ~
 
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        # - { path: ^/admin, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
+        - { path: ^/api_authentication, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api_registration, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api_password_reset, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/, role: IS_AUTHENTICATED_FULLY }

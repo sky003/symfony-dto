@@ -18,7 +18,7 @@ services:
     - db
   db:
     image: mysql:8
-    expose:
+    ports:
       - '3306:3306'
     env_file:
     - ./env/docker/mysql/.env
