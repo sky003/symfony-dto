@@ -16,7 +16,7 @@ use Psr\Log\LoggerInterface;
  *
  * @author Anton Pelykh <anton.pelykh.dev@gmail.com>
  */
-class SecurityService
+class SecurityService implements SecurityServiceInterface
 {
     /**
      * @var UserManagerInterface

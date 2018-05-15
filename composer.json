@@ -19,6 +19,7 @@
         "symfony/orm-pack": "*",
         "symfony/process": "^4.0",
         "symfony/security-bundle": "^4.0",
+        "symfony/serializer": "^4.0",
         "symfony/serializer-pack": "*",
         "symfony/swiftmailer-bundle": "^3.1",
         "symfony/twig-bundle": "^4.0",
