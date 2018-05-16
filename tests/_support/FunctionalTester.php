@@ -20,7 +20,8 @@ class FunctionalTester extends \Codeception\Actor
 {
     use _generated\FunctionalTesterActions;
 
-   /**
-    * Define custom actions here
-    */
+    public function haveContentTypeJson(): void
+    {
+        $this->haveHttpHeader('Content-Type', 'application/json');
+    }
 }

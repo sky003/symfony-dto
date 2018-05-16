@@ -1,7 +1,11 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
+
     locale: 'en'
+
+    mailer:
+        verification.from_email: 'admin@example.com'
 
 services:
     # default configuration for services in *this* file
@@ -28,6 +32,4 @@ services:
     # please note that last definitions always *replace* previous ones
     App\Component\Mailer\Mailer:
         arguments:
-            $parameters:
-                verfication:
-                    from_email: 'admin@example.com'
+            $parameters: '%mailer%'

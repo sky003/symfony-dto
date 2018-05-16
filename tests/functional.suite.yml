@@ -8,5 +8,13 @@
 actor: FunctionalTester
 modules:
     enabled:
-        # add a framework module here
+        - Symfony:
+            app_path: src
+            environment: test
+        - REST:
+            depends: Symfony
+        - Doctrine2:
+            depends: Symfony
+        - \Helper\Fixtures:
+            depends: Symfony
         - \Helper\Functional
