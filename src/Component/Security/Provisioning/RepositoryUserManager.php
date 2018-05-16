@@ -9,19 +9,18 @@ use App\Component\Security\Core\User\SystemUser;
 use App\Component\Security\Core\User\UserInterface;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Security\Core\Encoder\EncoderAwareInterface;
-use Symfony\Component\Security\Core\Encoder\PasswordEncoderInterface;
+use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
 
-class RepositoryUserManager implements UserManagerInterface, EncoderAwareInterface
+class RepositoryUserManager implements UserManagerInterface
 {
     /**
      * @var EntityManagerInterface
      */
     private $entityManager;
     /**
-     * @var PasswordEncoderInterface
+     * @var EncoderFactoryInterface
      */
-    private $passwordEncoder;
+    private $encoderFactory;
     /**
      * @var MailerInterface
      */
@@ -31,14 +30,14 @@ class RepositoryUserManager implements UserManagerInterface, EncoderAwareInterfa
      * RepositoryUserManager constructor.
      *
      * @param EntityManagerInterface $entityManager
-     * @param PasswordEncoderInterface $passwordEncoder
+     * @param EncoderFactoryInterface $encoderFactory
      * @param MailerInterface $mailer
      */
-    public function __construct(EntityManagerInterface $entityManager, PasswordEncoderInterface $passwordEncoder, MailerInterface $mailer)
+    public function __construct(EntityManagerInterface $entityManager, EncoderFactoryInterface $encoderFactory, MailerInterface $mailer)
     {
-        $this->entityManager = $entityManager;
-        $this->passwordEncoder = $passwordEncoder;
-        $this->mailer = $mailer;
+        $this->entityManager  = $entityManager;
+        $this->encoderFactory = $encoderFactory;
+        $this->mailer         = $mailer;
     }
 
     public function createUser(UserInterface $systemUser): void
@@ -101,9 +100,9 @@ class RepositoryUserManager implements UserManagerInterface, EncoderAwareInterfa
     /**
      * {@inheritdoc}
      */
-    public function getEncoderName(): string
+    public function getEncoderName(): ?string
     {
-        return 'bcrypt';
+        return null;
     }
 
     private function buildNewUser(UserInterface $systemUser): User
@@ -112,7 +111,7 @@ class RepositoryUserManager implements UserManagerInterface, EncoderAwareInterfa
         $user
             ->setEmail($systemUser->getEmail())
             ->setPasswordHash(
-                $this->passwordEncoder->encodePassword($systemUser->getPassword(), null)
+                $this->encoderFactory->getEncoder($systemUser)->encodePassword($systemUser->getPassword(), null)
             )
             ->setRole($this->buildUserRole($systemUser))
             ->setStatus($this->buildUserStatus($systemUser));
