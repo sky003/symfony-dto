@@ -63,6 +63,7 @@ class SecurityService implements SecurityServiceInterface
         );
 
         $this->userManager->createUser($systemUser);
+        $systemUser = $this->userManager->loadUserByEmail($email);
 
         if (null === $systemUser->getIdentifier()) {
             $this->logger->critical('Identifier have not been assigned to user by user manager.', [

@@ -43,7 +43,7 @@ class SystemUser implements UserInterface
     public function __construct(?int $identifier, ?string $email, ?string $password, array $roles = [], bool $accountEnabled = true, bool $accountNonUnverified = true, bool $accountNonLocked = true)
     {
         if ((0 === $identifier || null === $identifier)
-            || ('' === $email || null === $email)) {
+            && ('' === $email || null === $email)) {
             throw new \InvalidArgumentException('You need provide at least identifier or email.');
         }
 

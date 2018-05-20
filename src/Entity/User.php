@@ -43,7 +43,7 @@ class User
     /**
      * @var string
      *
-     * @ORM\Column(type="text")
+     * @ORM\Column(type="text", name="password_hash")
      */
     protected $passwordHash;
     /**
@@ -61,13 +61,13 @@ class User
     /**
      * @var \DateTime
      *
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="datetime", name="created_at")
      */
     protected $createdAt;
     /**
      * @var \DateTime
      *
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="datetime", name="updated_at", nullable=true)
      */
     protected $updatedAt;
 

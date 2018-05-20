@@ -1,0 +1,7 @@
+security:
+
+    encoders:
+        # Used the lowest possible value to speed up the fixtures generation.
+        App\Component\Security\Core\User\UserInterface:
+            algorithm: bcrypt
+            cost: 4

@@ -17,7 +17,7 @@ class UserAssembler
             ->setEmail($user->getEmail())
             ->setRole(
                 $this->buildStringRepresentationOfRole($user->getRole()))
-            ->setRole(
+            ->setStatus(
                 $this->buildStringRepresentationOfStatus($user->getStatus()))
             ->setCreatedAt($user->getCreatedAt())
             ->setUpdatedAt($user->getUpdatedAt());

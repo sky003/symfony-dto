@@ -44,7 +44,7 @@ class UserFixtureLoader extends AbstractFixture implements ContainerAwareInterfa
     {
         $faker = \Faker\Factory::create();
         /** @var PasswordEncoderInterface $passwordEncoder */
-        $passwordEncoder = $this->container->get('security.encoder_factory')->getEncoder(UserInterface::class);
+        $passwordEncoder = $this->container->get('test.security.encoder_factory')->getEncoder(UserInterface::class);
 
         for ($i = 0; $i < 5; $i++) {
             $user = new User();

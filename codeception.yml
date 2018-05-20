@@ -4,6 +4,8 @@ paths:
     data: tests/_data
     support: tests/_support
     envs: tests/_envs
+params:
+  - .env.test
 actor_suffix: Tester
 extensions:
     enabled:

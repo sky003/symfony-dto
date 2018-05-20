@@ -82,4 +82,20 @@ class SecurityController extends Controller
             true
         );
     }
+
+    /**
+     * @param Request $request
+     *
+     * @return JsonResponse
+     *
+     * @Route(
+     *     path="/security/verification",
+     *     methods={"POST"},
+     *     name="security/verification"
+     * )
+     */
+    public function verificationAction(Request $request): JsonResponse
+    {
+        return new JsonResponse();
+    }
 }

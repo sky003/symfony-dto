@@ -13,8 +13,9 @@ modules:
             environment: test
         - REST:
             depends: Symfony
-        - Doctrine2:
-            depends: Symfony
+        #- Doctrine2:
+        #    depends: Symfony
+        #    cleanup: false
         - \Helper\Fixtures:
             depends: Symfony
         - \Helper\Functional

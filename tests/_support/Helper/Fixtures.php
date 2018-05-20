@@ -9,6 +9,7 @@ use Doctrine\Common\DataFixtures\Executor\ORMExecutor;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\DataFixtures\Loader;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\LoadClassMetadataEventArgs;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 
@@ -34,7 +35,8 @@ class Fixtures extends Module
             $fixture->setContainer($symfony->_getContainer());
         }
 
-        $entityManager = $symfony->_getEntityManager();
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = $symfony->_getContainer()->get('test.doctrine.orm.fixtures_entity_manager');
 
         $entityManager->getEventManager()->addEventListener('loadClassMetadata', new class() {
             /**
@@ -44,9 +46,7 @@ class Fixtures extends Module
              */
             public function loadClassMetadata(LoadClassMetadataEventArgs $eventArgs): void
             {
-                /**
-                 * @var \Doctrine\ORM\Mapping\ClassMetadata $metadata
-                 */
+                /** @var \Doctrine\ORM\Mapping\ClassMetadata $metadata */
                 $metadata = $eventArgs->getClassMetadata();
                 // `Faker` generates all the fields for fixtures, including `createdAt` and `updatedAt` values.
                 // So the lifecycle callbacks should be disabled.
@@ -60,6 +60,8 @@ class Fixtures extends Module
         $loader->addFixture($fixture);
         $executor = new ORMExecutor($entityManager, $purger);
         $executor->execute($loader->getFixtures(), false);
+
+        $entityManager->close();
 
         return $fixture;
     }

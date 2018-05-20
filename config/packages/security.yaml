@@ -43,6 +43,6 @@ security:
     # Note: Only the *first* access control that matches will be used
     access_control:
         - { path: ^/api_authentication, role: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/api_registration, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/security/registration, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/api_password_reset, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/, role: IS_AUTHENTICATED_FULLY }

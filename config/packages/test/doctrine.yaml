@@ -1,0 +1,48 @@
+doctrine:
+    dbal:
+        default_connection: default
+        connections:
+            default:
+                driver: 'pdo_sqlite'
+                url: '%env(resolve:DATABASE_URL)%'
+                memory: true
+                charset: utf8mb4
+                default_table_options:
+                    charset: utf8mb4
+                    collate: utf8mb4_unicode_ci
+            fixtures:
+                driver: 'pdo_sqlite'
+                url: '%env(resolve:DATABASE_URL)%'
+                memory: true
+                charset: utf8mb4
+                default_table_options:
+                    charset: utf8mb4
+                    collate: utf8mb4_unicode_ci
+
+    orm:
+        default_entity_manager: default
+        auto_generate_proxy_classes: '%kernel.debug%'
+        entity_managers:
+            default:
+                connection: default
+                naming_strategy: doctrine.orm.naming_strategy.underscore
+                auto_mapping: true
+                mappings:
+                    App:
+                        is_bundle: false
+                        type: annotation
+                        dir: '%kernel.project_dir%/src/Entity'
+                        prefix: 'App\Entity'
+                        alias: App
+            # This entity manager instance used only by fixture loader.
+            fixtures:
+                connection: fixtures
+                naming_strategy: doctrine.orm.naming_strategy.underscore
+                auto_mapping: false
+                mappings:
+                    App:
+                        is_bundle: false
+                        type: annotation
+                        dir: '%kernel.project_dir%/src/Entity'
+                        prefix: 'App\Entity'
+                        alias: App
