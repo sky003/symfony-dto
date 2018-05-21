@@ -6,12 +6,15 @@ namespace App\Controller;
 
 use App\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use App\Dto\Assembler\UserAssembler;
+use App\Dto\Request\EmailVerificationToken;
 use App\Dto\Request\RegistrationEmailPassword;
 use App\Service\Security\SecurityServiceInterface;
+use App\Service\Security\ServiceException;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -70,7 +73,11 @@ class SecurityController extends Controller
             throw new UnprocessableEntityHttpException($errors);
         }
 
-        $user = $this->securityService->registration($dto->getEmail(), $dto->getPassword());
+        try {
+            $user = $this->securityService->registration($dto->getEmail(), $dto->getPassword());
+        } catch (ServiceException $e) {
+            throw new HttpException(500, 'Error occurred while trying to register.', $e);
+        }
 
         return new JsonResponse(
             $this->serializer->serialize(
@@ -96,6 +103,32 @@ class SecurityController extends Controller
      */
     public function verificationAction(Request $request): JsonResponse
     {
-        return new JsonResponse();
+        /** @var EmailVerificationToken $dto */
+        $dto = $this->serializer->deserialize(
+            $request->getContent(),
+            EmailVerificationToken::class,
+            'json'
+        );
+
+        $errors = $this->validator->validate($dto);
+        if (\count($errors) > 0) {
+            throw new UnprocessableEntityHttpException($errors);
+        }
+
+        try {
+            $user = $this->securityService->verification($dto->getId());
+        } catch (ServiceException $e) {
+            throw new HttpException(500, 'Error occurred while trying to verify an email.', $e);
+        }
+
+        return new JsonResponse(
+            $this->serializer->serialize(
+                (new UserAssembler())->writeDto($user),
+                'json'
+            ),
+            Response::HTTP_CREATED,
+            [],
+            true
+        );
     }
 }

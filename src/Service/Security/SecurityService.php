@@ -7,6 +7,7 @@ namespace App\Service\Security;
 use App\Component\Security\Core\User\SystemUser;
 use App\Component\Security\Provisioning\RepositoryUserManager;
 use App\Component\Security\Provisioning\UserManagerInterface;
+use App\Entity\EmailVerificationRequest;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -47,6 +48,7 @@ class SecurityService implements SecurityServiceInterface
      * @param string $password
      *
      * @return User Newly created user.
+     * @throws ServiceException
      */
     public function registration(string $email, string $password): User
     {
@@ -90,9 +92,11 @@ class SecurityService implements SecurityServiceInterface
                 ->find($systemUser->getIdentifier());
 
             if (null === $user) {
-                $this->logger->critical('Unable to find newly created system user in the repository.', [
+                $this->logger->critical('Unable to find a newly created system user.', [
                     'UserId' => $systemUser->getIdentifier(),
                 ]);
+
+                throw new ServiceException('Unable to find a newly created system user in the repository.');
             }
 
             $this->logger->debug('User registration process completed.');
@@ -103,5 +107,59 @@ class SecurityService implements SecurityServiceInterface
         throw new \LogicException(
             sprintf('Unsupported user manager instance "%s"', \get_class($this->userManager))
         );
+    }
+
+    /**
+     * @param int $id Verification identifier to find its metadata.
+     *
+     * @return User
+     * @throws ServiceException
+     */
+    public function verification(int $id): User
+    {
+        /** @var EmailVerificationRequest $verificationRequest */
+        $verificationRequest = $this->entityManager->getRepository(EmailVerificationRequest::class)
+            ->find($id);
+
+        if (null === $verificationRequest) {
+            $this->logger->critical('Unable to find the verification request metadata.', [
+                'EmailVerificationRequestId' => $verificationRequest->getId(),
+            ]);
+
+            throw new \UnexpectedValueException('Unable to find the verification request metadata in the repository.');
+        }
+
+        $this->entityManager->beginTransaction();
+        try {
+            $verificationRequest
+                ->setStatus(EmailVerificationRequest::STATUS_VERIFIED)
+                ->setVerifiedAt(new \DateTime());
+            $this->entityManager->merge($verificationRequest);
+
+            $user = $verificationRequest->getUser();
+            $user
+                ->setStatus(User::STATUS_ENABLED);
+            $this->entityManager->merge($user);
+
+            $this->entityManager->flush();
+            $this->entityManager->commit();
+        } catch (\Exception $e) {
+            $this->entityManager->rollback();
+
+            $this->logger->critical('Transaction failed.', [
+                'message' => $e->getMessage(),
+            ]);
+            $this->logger->critical('Unable to update the email verification metadata.', [
+                'EmailVerificationRequestId' => $verificationRequest->getId(),
+            ]);
+
+            throw new ServiceException(
+                sprintf('Transaction failed with message: %s', $e->getMessage()),
+                0,
+                $e
+            );
+        }
+
+        return $user;
     }
 }
