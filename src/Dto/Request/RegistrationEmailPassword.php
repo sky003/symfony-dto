@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace App\Dto\Request;
 
+use App\Component\Validator\Constraints as AppAssert;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class RegistrationEmailPassword
@@ -13,6 +14,7 @@ class RegistrationEmailPassword
      *
      * @Assert\NotBlank()
      * @Assert\Email()
+     * @AppAssert\UniqueEmail()
      */
     private $email;
     /**

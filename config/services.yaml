@@ -28,8 +28,13 @@ services:
         resource: '../src/Controller'
         tags: ['controller.service_arguments']
 
-    # add more service definitions when explicit configuration is needed
-    # please note that last definitions always *replace* previous ones
+    # send defined email messages
+    # like a verification email, a password reset email, and etc.
     App\Component\Mailer\Mailer:
         arguments:
             $parameters: '%mailer%'
+
+    # convert HTTP exceptions to JSON response
+    App\Component\HttpKernel\EventListener\HttpExceptionListener:
+        tags:
+            - { name: kernel.event_listener, event: kernel.exception }
