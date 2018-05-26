@@ -7,5 +7,7 @@ services:
     # aliases are prefixed with test. For example:
     #
     # test.App\Service\MyService: '@App\Service\MyService'
-    test.security.encoder_factory: '@security.encoder_factory'
+
+    # All the services below are using only by fixtures loader (see 'Fixtures' Codeception helper).
+    test.doctrine.fixtures.loader: '@doctrine.fixtures.loader'
     test.doctrine.orm.fixtures_entity_manager: '@doctrine.orm.fixtures_entity_manager'

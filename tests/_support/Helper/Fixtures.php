@@ -5,13 +5,12 @@ declare(strict_types = 1);
 namespace Helper;
 
 use Codeception\Module;
+use Doctrine\Bundle\FixturesBundle\Loader\SymfonyFixturesLoader;
 use Doctrine\Common\DataFixtures\Executor\ORMExecutor;
 use Doctrine\Common\DataFixtures\FixtureInterface;
-use Doctrine\Common\DataFixtures\Loader;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\LoadClassMetadataEventArgs;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 
 /**
  * Fixtures helper.
@@ -21,19 +20,16 @@ use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 class Fixtures extends Module
 {
     /**
-     * @param \Doctrine\Common\DataFixtures\FixtureInterface $fixture
+     * @param string $className
      *
-     * @return \App\Component\Doctrine\Common\DataFixtures\AbstractFixture
+     * @return \App\Component\Doctrine\Common\DataFixtures\AbstractFixture Loaded fixture instance
+     *                                                                     (loaded by provided class name).
      * @throws \Codeception\Exception\ModuleException
      */
-    public function loadFixture(FixtureInterface $fixture): FixtureInterface
+    public function loadFixture(string $className): FixtureInterface
     {
         /** @var Module\Symfony $symfony */
         $symfony = $this->getModule('Symfony');
-
-        if ($fixture instanceof ContainerAwareInterface) {
-            $fixture->setContainer($symfony->_getContainer());
-        }
 
         /** @var EntityManagerInterface $entityManager */
         $entityManager = $symfony->_getContainer()->get('test.doctrine.orm.fixtures_entity_manager');
@@ -54,11 +50,18 @@ class Fixtures extends Module
             }
         });
 
+        // Delete old fixtures data.
         $purger = new ORMPurger();
         $purger->setPurgeMode(ORMPurger::PURGE_MODE_DELETE);
-        $loader = new Loader();
-        $loader->addFixture($fixture);
+
+        /** @var SymfonyFixturesLoader $loader */
+        $loader = $symfony->_getContainer()->get('test.doctrine.fixtures.loader');
+        // Load specified fixture by class name.
+        // The fixture is getting from Symfony DI, so it should be registered.
+        $fixture = $loader->getFixture($className);
+
         $executor = new ORMExecutor($entityManager, $purger);
+        // Load the fixture with its dependencies to the database.
         $executor->execute($loader->getFixtures(), false);
 
         $entityManager->close();

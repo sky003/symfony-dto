@@ -10,9 +10,9 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * @author Anton Pelykh <anton.pelykh.dev@gmail.com>
  *
- * @AppAssert\RequestToken({
+ * @AppAssert\RequestToken(
  *     entityClass="App\Entity\EmailVerificationRequest",
- * })
+ * )
  */
 class EmailVerificationToken
 {

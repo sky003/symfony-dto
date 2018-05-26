@@ -49,7 +49,7 @@ class RequestTokenValidator extends ConstraintValidator
         /** @var \Doctrine\ORM\Mapping\ClassMetadata $class */
         $class = $this->entityManager->getClassMetadata($constraint->entityClass);
 
-        foreach ([$constraint->idPropertyName, $constraint->tokenPropertyName, $constraint->expiredAtPropertyName] as $fieldName) {
+        foreach ([$constraint->idPropertyName, $constraint->tokenPropertyName, $constraint->expiresAtPropertyName] as $fieldName) {
             if (!$class->hasField($fieldName)) {
                 throw new ConstraintDefinitionException(
                     \sprintf(
@@ -83,7 +83,7 @@ class RequestTokenValidator extends ConstraintValidator
             return;
         }
 
-        if ($result->{'get'.\ucfirst($constraint->expiredAtPropertyName)}() < new \DateTime('now')) {
+        if ($result->{'get'.\ucfirst($constraint->expiresAtPropertyName)}() < new \DateTime('now')) {
             $this->context->buildViolation($constraint->expiredMessage)
                 ->atPath($constraint->errorPath)
                 ->setCode(RequestToken::EXPIRED_ERROR)

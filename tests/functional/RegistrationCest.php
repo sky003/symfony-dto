@@ -13,7 +13,7 @@ class RegistrationCest
 
     public function _before(FunctionalTester $I): void
     {
-        $this->fixture = $I->loadFixture(new UserFixtureLoader());
+        $this->fixture = $I->loadFixture(UserFixtureLoader::class);
     }
 
     public function testRegistration(FunctionalTester $I): void

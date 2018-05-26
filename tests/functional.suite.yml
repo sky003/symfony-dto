@@ -13,6 +13,7 @@ modules:
             environment: test
         - REST:
             depends: Symfony
+            part: json
         #- Doctrine2:
         #    depends: Symfony
         #    cleanup: false

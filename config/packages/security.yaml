@@ -17,6 +17,10 @@ security:
             pattern: ^/security/registration
             anonymous: true
 
+        api_verification:
+            pattern: ^/security/verification
+            anonymous: true
+
         api_password_reset:
             pattern: ^/security/password-reset
             anonymous: true
@@ -42,7 +46,8 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        - { path: ^/api_authentication, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/security/authentication, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/security/registration, role: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/api_password_reset, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/security/verification, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/security/password-reset, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/, role: IS_AUTHENTICATED_FULLY }
