@@ -5,7 +5,8 @@ security:
 
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     providers:
-        in_memory: { memory: ~ }
+        system_user:
+            id: App\Component\Security\Core\User\SystemUser
 
     firewalls:
 
