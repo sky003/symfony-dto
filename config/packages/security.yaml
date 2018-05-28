@@ -3,7 +3,6 @@ security:
     encoders:
         App\Component\Security\Core\User\UserInterface: bcrypt
 
-    # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     providers:
         system_user:
             id: App\Component\Security\Core\User\SystemUser
@@ -30,11 +29,14 @@ security:
             pattern: ^/security/authentication
             stateless: true
             anonymous: true
-            form_login:
-                check_path: /security/authentication
+            guard:
+                authenticators:
+                    - App\Component\Security\Core\User\SystemUser
+            #form_login:
+            #    check_path: /security/authentication
                 require_previous_session: false
-                username_parameter: email
-                password_parameter: password
+            #    username_parameter: email
+            #    password_parameter: password
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
             logout: true
