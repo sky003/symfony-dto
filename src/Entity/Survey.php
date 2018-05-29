@@ -7,20 +7,16 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Class EmailVerificationRequest.
+ * Class Survey.
  *
  * @author Anton Pelykh <anton.pelykh.dev@gmail.com>
  *
  * @ORM\Entity()
- * @ORM\Table(name="email_verification_request")
+ * @ORM\Table(name="survey")
  * @ORM\HasLifecycleCallbacks()
  */
-class EmailVerificationRequest
+class Survey
 {
-    public const STATUS_VERIFIED = 1;
-    public const STATUS_PENDING = 10;
-    public const STATUS_UNVERIFIED = 20;
-
     /**
      * @var int
      *
@@ -32,27 +28,15 @@ class EmailVerificationRequest
     /**
      * @var string
      *
-     * @ORM\Column(type="text")
+     * @ORM\Column(type="string", length=255)
      */
-    private $token;
+    private $name;
     /**
-     * @var int
+     * @var string
      *
-     * @ORM\Column(type="smallint", length=3)
+     * @ORM\Column(type="text", nullable=true)
      */
-    private $status;
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(type="datetime", name="expires_at")
-     */
-    private $expiresAt;
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(type="datetime", name="verified_at", nullable=true)
-     */
-    private $verifiedAt;
+    private $intro;
     /**
      * @var \DateTime
      *
@@ -69,7 +53,7 @@ class EmailVerificationRequest
     /**
      * @var User
      *
-     * @ORM\ManyToOne(targetEntity="User", inversedBy="emailVerificationRequests")
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="surveys")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
      */
     private $user;
@@ -87,7 +71,7 @@ class EmailVerificationRequest
      *
      * @return self
      */
-    public function setId(int $id): EmailVerificationRequest
+    public function setId(int $id): Survey
     {
         $this->id = $id;
 
@@ -97,79 +81,39 @@ class EmailVerificationRequest
     /**
      * @return string
      */
-    public function getToken(): string
+    public function getName(): string
     {
-        return $this->token;
+        return $this->name;
     }
 
     /**
-     * @param string $token
+     * @param string $name
      *
      * @return self
      */
-    public function setToken(string $token): EmailVerificationRequest
+    public function setName(string $name): Survey
     {
-        $this->token = $token;
+        $this->name = $name;
 
         return $this;
     }
 
     /**
-     * @return int
+     * @return string
      */
-    public function getStatus(): int
+    public function getIntro(): ?string
     {
-        return $this->status;
+        return $this->intro;
     }
 
     /**
-     * @param int $status
+     * @param string $intro
      *
      * @return self
      */
-    public function setStatus(int $status): EmailVerificationRequest
+    public function setIntro(?string $intro): Survey
     {
-        $this->status = $status;
-
-        return $this;
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function getExpiresAt(): \DateTime
-    {
-        return $this->expiresAt;
-    }
-
-    /**
-     * @param \DateTime $expiresAt
-     *
-     * @return self
-     */
-    public function setExpiresAt(\DateTime $expiresAt): EmailVerificationRequest
-    {
-        $this->expiresAt = $expiresAt;
-
-        return $this;
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function getVerifiedAt(): ?\DateTime
-    {
-        return $this->verifiedAt;
-    }
-
-    /**
-     * @param \DateTime $verifiedAt
-     *
-     * @return self
-     */
-    public function setVerifiedAt(\DateTime $verifiedAt): EmailVerificationRequest
-    {
-        $this->verifiedAt = $verifiedAt;
+        $this->intro = $intro;
 
         return $this;
     }
@@ -187,7 +131,7 @@ class EmailVerificationRequest
      *
      * @return self
      */
-    public function setCreatedAt(\DateTime $createdAt): EmailVerificationRequest
+    public function setCreatedAt(\DateTime $createdAt): Survey
     {
         $this->createdAt = $createdAt;
 
@@ -207,7 +151,7 @@ class EmailVerificationRequest
      *
      * @return self
      */
-    public function setUpdatedAt(?\DateTime $updatedAt): EmailVerificationRequest
+    public function setUpdatedAt(?\DateTime $updatedAt): Survey
     {
         $this->updatedAt = $updatedAt;
 
@@ -227,7 +171,7 @@ class EmailVerificationRequest
      *
      * @return self
      */
-    public function setUser(User $user): EmailVerificationRequest
+    public function setUser(User $user): Survey
     {
         $this->user = $user;
 

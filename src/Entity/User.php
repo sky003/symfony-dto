@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -33,43 +34,43 @@ class User
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
      */
-    protected $id;
+    private $id;
     /**
      * @var string
      *
      * @ORM\Column(type="string", length=254, unique=true)
      */
-    protected $email;
+    private $email;
     /**
      * @var string
      *
      * @ORM\Column(type="text", name="password_hash")
      */
-    protected $passwordHash;
+    private $passwordHash;
     /**
      * @var int
      *
      * @ORM\Column(type="smallint", length=3)
      */
-    protected $role;
+    private $role;
     /**
      * @var int
      *
      * @ORM\Column(type="smallint", length=3)
      */
-    protected $status;
+    private $status;
     /**
      * @var \DateTime
      *
      * @ORM\Column(type="datetime", name="created_at")
      */
-    protected $createdAt;
+    private $createdAt;
     /**
      * @var \DateTime
      *
      * @ORM\Column(type="datetime", name="updated_at", nullable=true)
      */
-    protected $updatedAt;
+    private $updatedAt;
 
     /**
      * @var Collection
@@ -77,6 +78,21 @@ class User
      * @ORM\OneToMany(targetEntity="EmailVerificationRequest", mappedBy="user", cascade={"persist", "remove"})
      */
     private $emailVerificationRequests;
+    /**
+     * @var Collection
+     *
+     * @ORM\OneToMany(targetEntity="Survey", mappedBy="user", cascade={"persist", "remove"})
+     */
+    private $surveys;
+
+    /**
+     * User constructor.
+     */
+    public function __construct()
+    {
+        $this->emailVerificationRequests = new ArrayCollection();
+        $this->surveys = new ArrayCollection();
+    }
 
     /**
      * @return int
@@ -211,7 +227,7 @@ class User
      *
      * @return self
      */
-    public function setUpdatedAt(\DateTime $updatedAt): User
+    public function setUpdatedAt(?\DateTime $updatedAt): User
     {
         $this->updatedAt = $updatedAt;
 
@@ -234,6 +250,26 @@ class User
     public function setEmailVerificationRequests(Collection $emailVerificationRequests): User
     {
         $this->emailVerificationRequests = $emailVerificationRequests;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getSurveys(): Collection
+    {
+        return $this->surveys;
+    }
+
+    /**
+     * @param Collection $surveys
+     *
+     * @return self
+     */
+    public function setSurveys(Collection $surveys): User
+    {
+        $this->surveys = $surveys;
 
         return $this;
     }
