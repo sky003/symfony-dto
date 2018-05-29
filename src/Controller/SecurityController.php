@@ -131,4 +131,23 @@ class SecurityController extends Controller
             true
         );
     }
+
+    /**
+     * Currently this action not doing anything because the token issue is handling
+     * by `AuthenticationSuccessHandler` from LexikJWTAuthenticationBundle.
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     *
+     * @Route(
+     *     path="/security/authentication",
+     *     methods={"POST"},
+     *     name="security/authentication"
+     * )
+     */
+    public function authenticationAction(Request $request): JsonResponse
+    {
+        return new JsonResponse();
+    }
 }

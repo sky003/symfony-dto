@@ -69,7 +69,7 @@ class RepositoryUserManager implements UserManagerInterface
         // TODO: Implement deleteUser() method.
     }
 
-    public function loadUserByIdentifier(int $id): UserInterface
+    public function loadUserByIdentifier(int $id): ?UserInterface
     {
         /** @var User $user */
         $user = $this->entityManager
@@ -83,7 +83,7 @@ class RepositoryUserManager implements UserManagerInterface
         return $this->buildSystemUser($user);
     }
 
-    public function loadUserByEmail(string $email): UserInterface
+    public function loadUserByEmail(string $email): ?UserInterface
     {
         /** @var User $user */
         $user = $this->entityManager

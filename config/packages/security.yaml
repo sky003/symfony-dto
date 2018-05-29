@@ -5,7 +5,7 @@ security:
 
     providers:
         system_user:
-            id: App\Component\Security\Core\User\SystemUser
+            id: App\Component\Security\Core\User\SystemUserProvider
 
     firewalls:
 
@@ -31,20 +31,22 @@ security:
             anonymous: true
             guard:
                 authenticators:
-                    - App\Component\Security\Core\User\SystemUser
+                    - App\Component\Security\Guard\EmailPasswordAuthenticator
             #form_login:
             #    check_path: /security/authentication
-                require_previous_session: false
+            #    require_previous_session: false
             #    username_parameter: email
             #    password_parameter: password
-                success_handler: lexik_jwt_authentication.handler.authentication_success
-                failure_handler: lexik_jwt_authentication.handler.authentication_failure
+            #    success_handler: lexik_jwt_authentication.handler.authentication_success
+            #    failure_handler: lexik_jwt_authentication.handler.authentication_failure
             logout: true
 
         api:
             pattern: ^/
             stateless: true
-            lexik_jwt: ~
+            guard:
+                authenticators:
+                    - lexik_jwt_authentication.jwt_token_authenticator
 
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used

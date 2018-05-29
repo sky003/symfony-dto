@@ -7,9 +7,9 @@ namespace App\Component\Security\Guard;
 use App\Component\Security\Core\User\UserInterface as AppUserInterface;
 use App\Component\Security\Core\User\UserProviderInterface as AppUserProviderInterface;
 use App\Dto\Request\AuthenticationEmailPassword;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
@@ -206,20 +206,17 @@ final class EmailPasswordAuthenticator extends AbstractGuardAuthenticator
             return $this->authenticationFailureHandler->onAuthenticationFailure($request, $exception);
         }
 
-        $challenge = 'None realm="Access to the token issue resource"';
+        $data = [
+            'code' => 0,
+            'message' => 'Wrong email or password.',
+        ];
 
         if ($exception instanceof CustomUserMessageAuthenticationException) {
-            throw new UnauthorizedHttpException(
-                $challenge,
-                $exception->getMessage()
-            );
+            $data['code'] = $exception->getCode();
+            $data['message'] = $exception->getMessage();
         }
 
-        throw new UnauthorizedHttpException(
-            $challenge,
-            'Wrong email or password.',
-            $exception
-        );
+        return new JsonResponse($data, 401);
     }
 
     /**
@@ -228,7 +225,7 @@ final class EmailPasswordAuthenticator extends AbstractGuardAuthenticator
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey): ?Response
     {
         if (null !== $this->authenticationSuccessHandler) {
-            $this->authenticationSuccessHandler->onAuthenticationSuccess($request, $token);
+            return $this->authenticationSuccessHandler->onAuthenticationSuccess($request, $token);
         }
 
         return null;

@@ -28,6 +28,13 @@ services:
         resource: '../src/Controller'
         tags: ['controller.service_arguments']
 
+
+    # Components configuration below.
+    #
+    # I decided to separate the components and the services to show its role in the overall architecture. Inspired
+    # by String stereotype annotations.
+    # https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/stereotype/package-summary.html
+
     # send defined email messages
     # like a verification email, a password reset email, and etc.
     App\Component\Mailer\Mailer:
@@ -38,3 +45,9 @@ services:
     App\Component\HttpKernel\EventListener\HttpExceptionListener:
         tags:
             - { name: kernel.event_listener, event: kernel.exception }
+
+    App\Component\Security\Guard\EmailPasswordAuthenticator:
+        calls:
+            - method: setAuthenticationSuccessHandler
+              arguments:
+                  - '@lexik_jwt_authentication.handler.authentication_success'
