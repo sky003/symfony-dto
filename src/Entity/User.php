@@ -9,7 +9,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Represents a user in our system.
+ * User entity.
  *
  * @author Anton Pelykh <anton.pelykh.dev@gmail.com>
  *
@@ -17,7 +17,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="app_user")
  * @ORM\HasLifecycleCallbacks()
  */
-class User
+class User implements EntityResourceInterface
 {
     public const STATUS_ENABLED = 1;
     public const STATUS_UNVERIFIED = 10;
@@ -81,17 +81,21 @@ class User
     /**
      * @var Collection
      *
-     * @ORM\OneToMany(targetEntity="Survey", mappedBy="user", cascade={"persist", "remove"})
+     * @ORM\OneToMany(targetEntity="Interview", mappedBy="user", cascade={"persist", "remove"})
      */
-    private $surveys;
+    private $interviews;
 
     /**
      * User constructor.
+     *
+     * @param int|null $id
      */
-    public function __construct()
+    public function __construct(int $id = null)
     {
+        $this->id = $id;
+
         $this->emailVerificationRequests = new ArrayCollection();
-        $this->surveys = new ArrayCollection();
+        $this->interviews                = new ArrayCollection();
     }
 
     /**
@@ -104,14 +108,10 @@ class User
 
     /**
      * @param int $id
-     *
-     * @return self
      */
-    public function setId(int $id): User
+    public function setId(int $id): void
     {
         $this->id = $id;
-
-        return $this;
     }
 
     /**
@@ -257,19 +257,19 @@ class User
     /**
      * @return Collection
      */
-    public function getSurveys(): Collection
+    public function getInterviews(): Collection
     {
-        return $this->surveys;
+        return $this->interviews;
     }
 
     /**
-     * @param Collection $surveys
+     * @param Collection $interviews
      *
      * @return self
      */
-    public function setSurveys(Collection $surveys): User
+    public function setInterviews(Collection $interviews): User
     {
-        $this->surveys = $surveys;
+        $this->interviews = $interviews;
 
         return $this;
     }

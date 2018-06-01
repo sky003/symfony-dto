@@ -7,7 +7,7 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Class EmailVerificationRequest.
+ * EmailVerificationRequest entity.
  *
  * @author Anton Pelykh <anton.pelykh.dev@gmail.com>
  *

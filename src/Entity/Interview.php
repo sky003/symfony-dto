@@ -7,15 +7,15 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Class Survey.
+ * Interview entity.
  *
  * @author Anton Pelykh <anton.pelykh.dev@gmail.com>
  *
  * @ORM\Entity()
- * @ORM\Table(name="survey")
+ * @ORM\Table(name="interview")
  * @ORM\HasLifecycleCallbacks()
  */
-class Survey
+class Interview implements EntityResourceInterface
 {
     /**
      * @var int
@@ -53,10 +53,20 @@ class Survey
     /**
      * @var User
      *
-     * @ORM\ManyToOne(targetEntity="User", inversedBy="surveys")
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="interviews")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
      */
     private $user;
+
+    /**
+     * Interview constructor.
+     *
+     * @param int|null $id
+     */
+    public function __construct(int $id = null)
+    {
+        $this->id = $id;
+    }
 
     /**
      * @return int
@@ -68,14 +78,10 @@ class Survey
 
     /**
      * @param int $id
-     *
-     * @return self
      */
-    public function setId(int $id): Survey
+    public function setId(int $id): void
     {
         $this->id = $id;
-
-        return $this;
     }
 
     /**
@@ -91,7 +97,7 @@ class Survey
      *
      * @return self
      */
-    public function setName(string $name): Survey
+    public function setName(string $name): Interview
     {
         $this->name = $name;
 
@@ -111,7 +117,7 @@ class Survey
      *
      * @return self
      */
-    public function setIntro(?string $intro): Survey
+    public function setIntro(?string $intro): Interview
     {
         $this->intro = $intro;
 
@@ -131,7 +137,7 @@ class Survey
      *
      * @return self
      */
-    public function setCreatedAt(\DateTime $createdAt): Survey
+    public function setCreatedAt(\DateTime $createdAt): Interview
     {
         $this->createdAt = $createdAt;
 
@@ -151,7 +157,7 @@ class Survey
      *
      * @return self
      */
-    public function setUpdatedAt(?\DateTime $updatedAt): Survey
+    public function setUpdatedAt(?\DateTime $updatedAt): Interview
     {
         $this->updatedAt = $updatedAt;
 
@@ -171,7 +177,7 @@ class Survey
      *
      * @return self
      */
-    public function setUser(User $user): Survey
+    public function setUser(User $user): Interview
     {
         $this->user = $user;
 
