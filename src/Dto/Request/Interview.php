@@ -23,17 +23,6 @@ class Interview implements DtoResourceInterface
      */
     private $id;
     /**
-     * @var int
-     *
-     * @Assert\NotNull(
-     *     groups={"OpCreate"},
-     * )
-     * @Assert\IsNull(
-     *     groups={"OpUpdate"},
-     * )
-     */
-    private $userId;
-    /**
      * @var string
      *
      * @Assert\NotBlank(
@@ -69,26 +58,6 @@ class Interview implements DtoResourceInterface
     public function setId(int $id): Interview
     {
         $this->id = $id;
-
-        return $this;
-    }
-
-    /**
-     * @return int
-     */
-    public function getUserId(): int
-    {
-        return $this->userId;
-    }
-
-    /**
-     * @param int $userId
-     *
-     * @return self
-     */
-    public function setUserId(int $userId): Interview
-    {
-        $this->userId = $userId;
 
         return $this;
     }

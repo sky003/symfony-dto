@@ -8,7 +8,6 @@ use App\Dto\Assembler\EntityAssemblerInterface;
 use App\Dto\Request;
 use App\Entity\EntityResourceInterface;
 use App\Entity\Interview;
-use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
@@ -49,14 +48,8 @@ final class InterviewEntityAssembler implements EntityAssemblerInterface
 
     private function buildNewEntity(): Interview
     {
-        /** @var User $user */
-        $user = $this->entityManager
-            ->getRepository(User::class)
-            ->find($this->dto->getUserId());
-
         $interview = new Interview();
         $interview
-            ->setUser($user)
             ->setName($this->dto->getName())
             ->setIntro($this->dto->getIntro());
 

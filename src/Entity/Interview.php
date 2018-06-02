@@ -11,7 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @author Anton Pelykh <anton.pelykh.dev@gmail.com>
  *
- * @ORM\Entity()
+ * @ORM\Entity(repositoryClass="App\Repository\InterviewRepository")
  * @ORM\Table(name="interview")
  * @ORM\HasLifecycleCallbacks()
  */
