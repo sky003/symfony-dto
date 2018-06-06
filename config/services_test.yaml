@@ -8,6 +8,6 @@ services:
     #
     # test.App\Service\MyService: '@App\Service\MyService'
 
-    # All the services below are using only by fixtures loader (see 'Fixtures' Codeception helper).
+    # All the services below are using only by fixtures loader (see Codeception helpers).
     test.doctrine.fixtures.loader: '@doctrine.fixtures.loader'
     test.doctrine.orm.fixtures_entity_manager: '@doctrine.orm.fixtures_entity_manager'

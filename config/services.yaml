@@ -7,6 +7,10 @@ parameters:
     mailer:
         verification.from_email: 'admin@example.com'
 
+    jwt:
+        private_key_file: '%kernel.project_dir%/%env(JWT_PRIVATE_KEY_FILE)%'
+        public_key_file: '%kernel.project_dir%/%env(JWT_PUBLIC_KEY_FILE)%'
+
 services:
     # default configuration for services in *this* file
     _defaults:
@@ -45,6 +49,11 @@ services:
     App\Component\HttpKernel\EventListener\HttpExceptionListener:
         tags:
             - { name: kernel.event_listener, event: kernel.exception }
+
+    App\Component\Jwt\JwtTokenManager:
+        arguments:
+            $privateKeyFile: '%jwt.private_key_file%'
+            $publicKeyFile: '%jwt.public_key_file%'
 
     App\Component\Security\Guard\EmailPasswordAuthenticator:
         calls:
