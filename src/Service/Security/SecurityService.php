@@ -4,11 +4,14 @@ declare(strict_types = 1);
 
 namespace App\Service\Security;
 
+use App\Component\Jwt\JwtTokenManagerInterface;
 use App\Component\Security\Core\User\SystemUser;
 use App\Component\Security\Provisioning\RepositoryUserManager;
 use App\Component\Security\Provisioning\UserManagerInterface;
 use App\Entity\EmailVerificationRequest;
+use App\Entity\Token;
 use App\Entity\User;
+use App\Service\Security\Exception\ServiceException;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 
@@ -20,9 +23,18 @@ use Psr\Log\LoggerInterface;
 class SecurityService implements SecurityServiceInterface
 {
     /**
+     * Access token expires after 24 hours.
+     */
+    private const ACCESS_TOKEN_EXPIRES_AFTER = 86400;
+
+    /**
      * @var UserManagerInterface
      */
     private $userManager;
+    /**
+     * @var JwtTokenManagerInterface
+     */
+    private $jwtTokenManager;
     /**
      * @var EntityManagerInterface
      */
@@ -32,9 +44,10 @@ class SecurityService implements SecurityServiceInterface
      */
     private $logger;
 
-    public function __construct(UserManagerInterface $userManager, EntityManagerInterface $entityManager, LoggerInterface $logger)
+    public function __construct(UserManagerInterface $userManager, JwtTokenManagerInterface $jwtTokenManager, EntityManagerInterface $entityManager, LoggerInterface $logger)
     {
         $this->userManager = $userManager;
+        $this->jwtTokenManager = $jwtTokenManager;
         $this->entityManager = $entityManager;
         $this->logger = $logger;
     }
@@ -50,7 +63,7 @@ class SecurityService implements SecurityServiceInterface
      * @return User Newly created user.
      * @throws ServiceException
      */
-    public function registration(string $email, string $password): User
+    public function register(string $email, string $password): User
     {
         $this->logger->debug('User registration process started.');
 
@@ -110,16 +123,16 @@ class SecurityService implements SecurityServiceInterface
     }
 
     /**
-     * @param int $id Verification identifier to find its metadata.
+     * @param int $verificationRequestId Verification identifier to find its metadata.
      *
      * @return User
      * @throws ServiceException
      */
-    public function verification(int $id): User
+    public function verify(int $verificationRequestId): User
     {
         /** @var EmailVerificationRequest $verificationRequest */
         $verificationRequest = $this->entityManager->getRepository(EmailVerificationRequest::class)
-            ->find($id);
+            ->find($verificationRequestId);
 
         if (null === $verificationRequest) {
             $this->logger->critical('Unable to find the verification request metadata.', [
@@ -161,5 +174,32 @@ class SecurityService implements SecurityServiceInterface
         }
 
         return $user;
+    }
+
+    /**
+     * @param int $userId
+     *
+     * @return Token
+     */
+    public function issueToken(int $userId): Token
+    {
+        /** @var User $user */
+        //$user = $this->entityManager
+        //    ->getRepository(User::class)
+        //    ->find($userId);
+
+        $expiresAt = time() + self::ACCESS_TOKEN_EXPIRES_AFTER;
+        $payload = [
+            'sub' => $userId,
+            'exp' => $expiresAt,
+        ];
+        $accessToken = $this->jwtTokenManager->encode($payload);
+
+        $token = new Token();
+        $token
+            ->setAccessToken($accessToken)
+            ->setAccessTokenExpiresIn(new \DateTime('@'.$expiresAt));
+
+        return $token;
     }
 }

@@ -5,11 +5,13 @@ declare(strict_types = 1);
 namespace App\Controller;
 
 use App\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
+use App\Component\Security\Core\User\UserInterface;
+use App\Dto\Assembler\Token\TokenDtoAssembler;
 use App\Dto\Assembler\UserAssembler;
 use App\Dto\Request\EmailVerificationToken;
 use App\Dto\Request\RegistrationEmailPassword;
 use App\Service\Security\SecurityServiceInterface;
-use App\Service\Security\ServiceException;
+use App\Service\Security\Exception\ServiceException;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -74,7 +76,7 @@ class SecurityController extends Controller
         }
 
         try {
-            $user = $this->securityService->registration($dto->getEmail(), $dto->getPassword());
+            $user = $this->securityService->register($dto->getEmail(), $dto->getPassword());
         } catch (ServiceException $e) {
             throw new HttpException(500, 'Error occurred while trying to register.', $e);
         }
@@ -116,7 +118,7 @@ class SecurityController extends Controller
         }
 
         try {
-            $user = $this->securityService->verification($dto->getId());
+            $user = $this->securityService->verify($dto->getId());
         } catch (ServiceException $e) {
             throw new HttpException(500, 'Error occurred while trying to verify an email.', $e);
         }
@@ -148,6 +150,18 @@ class SecurityController extends Controller
      */
     public function authenticationAction(Request $request): JsonResponse
     {
-        return new JsonResponse();
+        /** @var UserInterface $user */
+        $user = $this->getUser();
+        $token = $this->securityService->issueToken($user->getIdentifier());
+
+        return new JsonResponse(
+            $this->serializer->serialize(
+                (new TokenDtoAssembler($token))->writeDto('v1'),
+                'json'
+            ),
+            Response::HTTP_OK,
+            [],
+            true
+        );
     }
 }

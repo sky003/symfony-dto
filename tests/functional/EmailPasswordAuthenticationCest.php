@@ -30,7 +30,8 @@ class EmailPasswordAuthenticationCest
         $I->seeResponseCodeIs(200);
         $I->seeResponseIsJson();
         $I->seeResponseMatchesJsonType([
-            'token' => 'string',
+            'accessToken' => 'string',
+            'accessTokenExpiresIn' => 'string',
         ]);
     }
 

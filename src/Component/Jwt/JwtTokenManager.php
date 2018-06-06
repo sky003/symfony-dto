@@ -96,11 +96,11 @@ class JwtTokenManager implements JwtTokenManagerInterface
 
     private function getPrivateKey(): Key
     {
-        return new Key($this->privateKeyFile);
+        return new Key(file_get_contents($this->privateKeyFile));
     }
 
     private function getPublicKey(): Key
     {
-        return new Key($this->publicKeyFile);
+        return new Key(file_get_contents($this->publicKeyFile));
     }
 }
