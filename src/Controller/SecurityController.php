@@ -135,8 +135,7 @@ class SecurityController extends Controller
     }
 
     /**
-     * Currently this action not doing anything because the token issue is handling
-     * by `AuthenticationSuccessHandler` from LexikJWTAuthenticationBundle.
+     * Issue a new token for successfully authenticated user.
      *
      * @param Request $request
      *

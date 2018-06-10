@@ -34,12 +34,12 @@ security:
                     - App\Component\Security\Guard\EmailPasswordAuthenticator
             logout: true
 
-        #api:
-        #    pattern: ^/
-        #    stateless: true
-        #    guard:
-        #        authenticators:
-        #            - lexik_jwt_authentication.jwt_token_authenticator
+        api:
+            pattern: ^/
+            stateless: true
+            guard:
+                authenticators:
+                    - App\Component\Security\Guard\JwtTokenAuthenticator
 
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used

@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace App\Component\Security\Core\User;
 
 use App\Component\Security\Core\User\Exception\EmailNotFoundException;
+use App\Component\Security\Core\User\Exception\IdentifierNotFoundException;
 use App\Component\Security\Provisioning\UserManagerInterface;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -33,15 +34,27 @@ class SystemUserProvider implements UserProviderInterface
 
     /**
      * {@inheritdoc}
-     *
-     * @throws EmailNotFoundException
      */
     public function loadUserByEmail(string $email): UserInterface
     {
         $user = $this->userManager->loadUserByEmail($email);
 
         if (null === $user) {
-            throw new EmailNotFoundException('Email not found so the user can not be loaded.');
+            throw new EmailNotFoundException('User with provided email not found.');
+        }
+
+        return $user;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function loadUserByIdentifier(int $identifier): UserInterface
+    {
+        $user = $this->userManager->loadUserByIdentifier($identifier);
+
+        if (null === $user) {
+            throw new IdentifierNotFoundException('User with provided identifier not found.');
         }
 
         return $user;

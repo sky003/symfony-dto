@@ -184,14 +184,15 @@ class SecurityService implements SecurityServiceInterface
     public function issueToken(int $userId): Token
     {
         /** @var User $user */
-        //$user = $this->entityManager
-        //    ->getRepository(User::class)
-        //    ->find($userId);
+        $user = $this->entityManager
+            ->getRepository(User::class)
+            ->find($userId);
 
         $expiresAt = time() + self::ACCESS_TOKEN_EXPIRES_AFTER;
         $payload = [
-            'sub' => $userId,
             'exp' => $expiresAt,
+            'sub' => $user->getId(),
+            'role' => $user->getRole(),
         ];
         $accessToken = $this->jwtTokenManager->encode($payload);
 
