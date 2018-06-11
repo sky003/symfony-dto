@@ -85,7 +85,7 @@ class Interview implements DtoResourceInterface
     /**
      * @return string
      */
-    public function getIntro(): string
+    public function getIntro(): ?string
     {
         return $this->intro;
     }
@@ -95,7 +95,7 @@ class Interview implements DtoResourceInterface
      *
      * @return self
      */
-    public function setIntro(string $intro): Interview
+    public function setIntro(?string $intro): Interview
     {
         $this->intro = $intro;
 

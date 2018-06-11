@@ -19,4 +19,6 @@ modules:
         #    cleanup: false
         - \Helper\Fixtures:
             depends: Symfony
+        - \Helper\JwtToken:
+            depends: Symfony
         - \Helper\Functional

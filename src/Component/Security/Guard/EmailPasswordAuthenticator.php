@@ -87,7 +87,13 @@ final class EmailPasswordAuthenticator extends AbstractGuardAuthenticator
      */
     public function start(Request $request, AuthenticationException $authException = null): Response
     {
-        return new Response('Unauthorized', 401);
+        return new JsonResponse(
+            [
+                'code' => 0,
+                'message' => 'Authentication credentials not provided.',
+            ],
+            401
+        );
     }
 
     /**

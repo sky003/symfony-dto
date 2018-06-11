@@ -192,7 +192,6 @@ class SecurityService implements SecurityServiceInterface
         $payload = [
             'exp' => $expiresAt,
             'sub' => $user->getId(),
-            'role' => $user->getRole(),
         ];
         $accessToken = $this->jwtTokenManager->encode($payload);
 

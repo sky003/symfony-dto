@@ -51,8 +51,8 @@ class InterviewCrudService implements CrudServiceInterface
 
     public function create(object $entity): void
     {
-        $this->throwExceptionIfNotSupported($entity);
         /** @var Interview $entity */
+        $this->throwExceptionIfNotSupported($entity);
 
         // Assign an interview with the currently authenticate user.
         $entity->setUser(
@@ -65,6 +65,7 @@ class InterviewCrudService implements CrudServiceInterface
 
     public function update(object $entity): void
     {
+        /** @var Interview $entity */
         $this->throwExceptionIfNotSupported($entity);
 
         // TODO: Implement update() method.

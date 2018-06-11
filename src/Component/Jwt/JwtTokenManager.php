@@ -8,6 +8,7 @@ use App\Component\Jwt\Exception\JwtExpiredException;
 use App\Component\Jwt\Exception\JwtInvalidException;
 use App\Component\Jwt\Exception\JwtSignatureInvalidException;
 use Lcobucci\JWT\Builder;
+use Lcobucci\JWT\Claim;
 use Lcobucci\JWT\Parser;
 use Lcobucci\JWT\Signer\Key;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
@@ -73,7 +74,14 @@ class JwtTokenManager implements JwtTokenManagerInterface
             throw new JwtInvalidException('JWT token not valid.');
         }
 
-        return $token->getClaims();
+        $claims = $token->getClaims();
+        $payload = [];
+        /** @var Claim $claim */
+        foreach ($claims as $claim) {
+            $payload[$claim->getName()] = $claim->getValue();
+        }
+
+        return $payload;
     }
 
     /**

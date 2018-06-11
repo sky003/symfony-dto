@@ -31,7 +31,7 @@ class InterviewDtoAssembler implements DtoAssemblerInterface
     public function writeDto(string $version): Response\DtoResourceInterface
     {
         // Currently only v1 is supported.
-        if ($version === 'v1') {
+        if ($version !== 'v1') {
             throw new \InvalidArgumentException('Unsupported version provided.');
         }
 
