@@ -37,4 +37,22 @@ class InterviewController extends AbstractCrudController
     {
         return parent::createAction($request);
     }
+
+    /**
+     * @param Request $request
+     * @param int     $id
+     *
+     * @return JsonResponse
+     *
+     * @Route(
+     *     path="/interview/{id}",
+     *     requirements={"id"="\d+"},
+     *     methods={"PUT"},
+     *     name="interview/update",
+     * )
+     */
+    public function updateAction(Request $request, int $id): JsonResponse
+    {
+        return parent::updateAction($request, $id);
+    }
 }

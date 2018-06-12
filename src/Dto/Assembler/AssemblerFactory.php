@@ -36,7 +36,7 @@ class AssemblerFactory implements AssemblerFactoryInterface
     public function loadDto(DtoResourceInterface $dto): EntityAssemblerInterface
     {
         if ($dto instanceof Request\Interview) {
-            return new InterviewEntityAssembler($this->entityManager, $dto);
+            return new InterviewEntityAssembler($dto, $this->entityManager);
         }
 
         throw new \LogicException('Unable to find an assembler for the DTO object you provide.');

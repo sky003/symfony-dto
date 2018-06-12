@@ -16,13 +16,13 @@ use Doctrine\ORM\EntityManagerInterface;
 final class InterviewEntityAssembler implements EntityAssemblerInterface
 {
     /**
-     * @var EntityManagerInterface
-     */
-    private $entityManager;
-    /**
      * @var Request\Interview
      */
     private $dto;
+    /**
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
 
     /**
      * InterviewEntityAssembler constructor.
@@ -30,10 +30,10 @@ final class InterviewEntityAssembler implements EntityAssemblerInterface
      * @param EntityManagerInterface $entityManager
      * @param Request\Interview      $dto
      */
-    public function __construct(EntityManagerInterface $entityManager, Request\Interview $dto)
+    public function __construct(Request\Interview $dto, EntityManagerInterface $entityManager)
     {
-        $this->entityManager = $entityManager;
         $this->dto           = $dto;
+        $this->entityManager = $entityManager;
     }
 
     public function writeEntity(): EntityResourceInterface
@@ -56,6 +56,11 @@ final class InterviewEntityAssembler implements EntityAssemblerInterface
         return $interview;
     }
 
+    /**
+     * Here's implemented PATCH-like update.
+     *
+     * @return Interview
+     */
     private function buildUpdatedEntity(): Interview
     {
         /** @var Interview $interview */
@@ -63,7 +68,16 @@ final class InterviewEntityAssembler implements EntityAssemblerInterface
             ->getRepository(Interview::class)
             ->find($this->dto->getId());
 
-        // TODO: Implement PATCH-like update.
+        if (!$this->dto instanceof Request\PropertyChangeTrackerInterface) {
+            throw new \LogicException('Can not use property change tracking strategy.');
+        }
+
+        if ($this->dto->isPropertyChanged('name')) {
+            $interview->setName($this->dto->getName());
+        }
+        if ($this->dto->isPropertyChanged('intro')) {
+            $interview->setIntro($this->dto->getIntro());
+        }
 
         return $interview;
     }

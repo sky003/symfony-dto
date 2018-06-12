@@ -19,4 +19,11 @@ interface DtoResourceInterface
      *                  and you can only perform a "create" operation on it.
      */
     public function getId(): ?int;
+
+    /**
+     * Set the resource identifier.
+     *
+     * @param int $id
+     */
+    public function setId(int $id): void;
 }

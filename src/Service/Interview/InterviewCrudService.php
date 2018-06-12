@@ -68,7 +68,8 @@ class InterviewCrudService implements CrudServiceInterface
         /** @var Interview $entity */
         $this->throwExceptionIfNotSupported($entity);
 
-        // TODO: Implement update() method.
+        $this->entityManager->persist($entity);
+        $this->entityManager->flush();
     }
 
     public function delete(int $id): void

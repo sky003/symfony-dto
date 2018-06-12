@@ -11,7 +11,7 @@ use App\Entity\Interview;
 /**
  * @author Anton Pelykh <anton.pelykh.dev@gmail.com>
  */
-class InterviewDtoAssembler implements DtoAssemblerInterface
+final class InterviewDtoAssembler implements DtoAssemblerInterface
 {
     /**
      * @var Interview

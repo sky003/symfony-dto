@@ -38,6 +38,14 @@ services:
     # by String stereotype annotations.
     # https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/stereotype/package-summary.html
 
+    # serializer configuration
+    App\Component\Serializer\Normalizer\DtoObjectNormalizer:
+        tags:
+            - { name: 'serializer.normalizer', priority: 1 }
+    Symfony\Component\Serializer\Normalizer\DateTimeNormalizer:
+        tags:
+            - { name: 'serializer.normalizer', priority: 10 }
+
     # send defined email messages
     # like a verification email, a password reset email, and etc.
     App\Component\Mailer\Mailer:
@@ -47,7 +55,7 @@ services:
     # convert HTTP exceptions to JSON response
     App\Component\HttpKernel\EventListener\HttpExceptionListener:
         tags:
-            - { name: kernel.event_listener, event: kernel.exception }
+            - { name: 'kernel.event_listener', event: 'kernel.exception' }
 
     App\Component\Jwt\JwtTokenManager:
         arguments:

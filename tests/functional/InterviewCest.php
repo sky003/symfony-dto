@@ -113,4 +113,116 @@ class InterviewCest
             ],
         ]);
     }
+
+    public function testUpdate(FunctionalTester $I): void
+    {
+        /** @var Interview $interview */
+        $interview = $this->fixture->getReference(InterviewFixtureLoader::REF_ENABLED_INTERVIEW, 1);
+
+        $data = [
+            'name' => 'Updated interview name.',
+        ];
+
+        $I->haveContentTypeJson();
+        $I->amBearerAuthenticated(
+            $I->createJwtToken([
+                'sub' => $interview->getUser()->getId(),
+            ])
+        );
+        $I->sendPUT('/interview/'.$interview->getId(), $data);
+
+        $I->seeResponseCodeIs(200);
+        $I->seeResponseIsJson();
+        $I->seeResponseMatchesJsonType([
+            'updatedAt' => 'string',
+        ]);
+        $I->seeResponseContainsJson([
+            'id' => $interview->getId(),
+            'name' => $data['name'],
+            'intro' => $interview->getIntro(),
+        ]);
+    }
+
+    public function testUpdateWithNullableData(FunctionalTester $I): void
+    {
+        /** @var Interview $interview */
+        $interview = $this->fixture->getReference(InterviewFixtureLoader::REF_ENABLED_INTERVIEW, 1);
+
+        $data = [
+            'intro' => 'Some really long intro...',
+        ];
+
+        $I->haveContentTypeJson();
+        $I->amBearerAuthenticated(
+            $I->createJwtToken([
+                'sub' => $interview->getUser()->getId(),
+            ])
+        );
+        $I->sendPUT('/interview/'.$interview->getId(), $data);
+
+        $I->seeResponseCodeIs(200);
+        $I->seeResponseIsJson();
+        $I->seeResponseMatchesJsonType([
+            'updatedAt' => 'string',
+        ]);
+        $I->seeResponseContainsJson([
+            'id' => $interview->getId(),
+            'name' => $interview->getName(),
+            'intro' => $data['intro'],
+        ]);
+    }
+
+    public function testUpdateWithoutAccessToUpdate(FunctionalTester $I): void
+    {
+        /** @var Interview $interview */
+        $interview = $this->fixture->getReference(InterviewFixtureLoader::REF_ENABLED_INTERVIEW, 1);
+
+        $data = [
+            'name' => 'Updated interview name.',
+        ];
+
+        $I->haveContentTypeJson();
+        $I->amBearerAuthenticated(
+            $I->createJwtToken([
+                'sub' => $interview->getUser()->getId() + 1, // User that definitely haven't credentials to update this entity.
+            ])
+        );
+        $I->sendPUT('/interview/'.$interview->getId(), $data);
+
+        $I->seeResponseCodeIs(403);
+        $I->seeResponseIsJson();
+        $I->seeResponseContainsJson([
+            'message' => 'You have no access to update the resource.',
+        ]);
+    }
+
+    public function testUpdateWithIncorrectData(FunctionalTester $I): void
+    {
+        /** @var Interview $interview */
+        $interview = $this->fixture->getReference(InterviewFixtureLoader::REF_ENABLED_INTERVIEW, 4);
+
+        $data = [
+            'name' => null,
+            'intro' => 'Some long intro...',
+        ];
+
+        $I->haveContentTypeJson();
+        $I->amBearerAuthenticated(
+            $I->createJwtToken([
+                'sub' => $interview->getUser()->getId(),
+            ])
+        );
+        $I->sendPUT('/interview/'.$interview->getId(), $data);
+
+        $I->seeResponseCodeIs(422);
+        $I->seeResponseIsJson();
+        $I->seeResponseContainsJson([
+            'validationErrors' => [
+                [
+                    'property' => 'name',
+                    'message' => 'This value should not be blank.',
+                ],
+            ],
+        ]);
+    }
 }

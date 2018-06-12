@@ -4,12 +4,13 @@ declare(strict_types = 1);
 
 namespace App\Dto\Request;
 
+use App\Component\Validator\Constraints as AppAssert;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @author Anton Pelykh <anton.pelykh.dev@gmail.com>
  */
-class Interview implements DtoResourceInterface
+class Interview extends AbstractPropertyChangeTracker implements DtoResourceInterface
 {
     /**
      * @var int
@@ -20,16 +21,22 @@ class Interview implements DtoResourceInterface
      * @Assert\NotNull(
      *     groups={"OpUpdate"},
      * )
+     * @AppAssert\ExistEntity(
+     *     entityClass="App\Entity\Interview",
+     *     properties={"id"},
+     *     groups={"OpUpdate"},
+     * )
      */
     private $id;
     /**
      * @var string
      *
      * @Assert\NotBlank(
-     *     groups={"OpCreate"}
+     *     groups={"OpCreate", "OpUpdate"},
      * )
      * @Assert\Length(
      *     max=255,
+     *     groups={"OpCreate", "OpUpdate"},
      * )
      */
     private $name;
@@ -38,6 +45,7 @@ class Interview implements DtoResourceInterface
      *
      * @Assert\Length(
      *     max=1000,
+     *     groups={"OpCreate", "OpUpdate"},
      * )
      */
     private $intro;
@@ -52,20 +60,18 @@ class Interview implements DtoResourceInterface
 
     /**
      * @param int $id
-     *
-     * @return self
      */
-    public function setId(int $id): Interview
+    public function setId(int $id): void
     {
-        $this->id = $id;
+        $this->registerPropertyChanged('id');
 
-        return $this;
+        $this->id = $id;
     }
 
     /**
      * @return string
      */
-    public function getName(): string
+    public function getName(): ?string
     {
         return $this->name;
     }
@@ -75,8 +81,10 @@ class Interview implements DtoResourceInterface
      *
      * @return self
      */
-    public function setName(string $name): Interview
+    public function setName(?string $name): Interview
     {
+        $this->registerPropertyChanged('name');
+
         $this->name = $name;
 
         return $this;
@@ -97,6 +105,8 @@ class Interview implements DtoResourceInterface
      */
     public function setIntro(?string $intro): Interview
     {
+        $this->registerPropertyChanged('intro');
+
         $this->intro = $intro;
 
         return $this;
