@@ -7,6 +7,7 @@ namespace App\Controller;
 use App\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use App\Component\Security\Core\Authorization\Voter\AbstractCrudVoter;
 use App\Dto\Assembler\AssemblerFactoryInterface;
+use App\Dto\Assembler\Exception\DtoIdentifierNotFoundException;
 use App\Dto\Request\DtoResourceInterface;
 use App\Service\CrudServiceInterface;
 use App\Service\ServiceException;
@@ -16,6 +17,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -76,15 +78,12 @@ abstract class AbstractCrudController extends Controller
     abstract public function getDtoClassName(): string;
 
     /**
+     * Create a new resource.
+     *
      * @param Request $request
      *
      * @return JsonResponse
      */
-    public function getAction(Request $request): JsonResponse
-    {
-        return new JsonResponse();
-    }
-
     public function createAction(Request $request): JsonResponse
     {
         /** @var DtoResourceInterface $requestDto */
@@ -120,17 +119,31 @@ abstract class AbstractCrudController extends Controller
         );
     }
 
+    /**
+     * Update a resource.
+     *
+     * This action can handle PUT and PATCH update.
+     *
+     * @param Request $request
+     * @param int $id
+     *
+     * @return JsonResponse
+     */
     public function updateAction(Request $request, int $id): JsonResponse
     {
-        /** @var DtoResourceInterface $requestDto */
-        $requestDto = $this->serializer->deserialize(
-            $request->getContent(),
-            $this->getDtoClassName(),
-            'json',
-            [
-                'dto_id' => $id,
-            ]
-        );
+        try {
+            /** @var DtoResourceInterface $requestDto */
+            $requestDto = $this->serializer->deserialize(
+                $request->getContent(),
+                $this->getDtoClassName(),
+                'json',
+                [
+                    'dto_id' => $id,
+                ]
+            );
+        } catch (DtoIdentifierNotFoundException $e) {
+            throw new NotFoundHttpException('Resource not found.');
+        }
 
         $errors = $this->validator->validate($requestDto, null, ['OpUpdate']);
         if (\count($errors) > 0) {

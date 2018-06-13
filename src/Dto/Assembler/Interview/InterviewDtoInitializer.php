@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace App\Dto\Assembler\Interview;
 
 use App\Dto\Assembler\DtoInitializerInterface;
+use App\Dto\Assembler\Exception\DtoIdentifierNotFoundException;
 use App\Dto\Request;
 use App\Entity\Interview;
 use Doctrine\ORM\EntityManagerInterface;
@@ -33,7 +34,6 @@ class InterviewDtoInitializer implements DtoInitializerInterface
      * if some property's values not provided after deserialization (e.g. after PATCH request deserialization).
      *
      * @return Request\DtoResourceInterface
-     * @throws \Doctrine\ORM\ORMException
      */
     public function initializeDto(): Request\DtoResourceInterface
     {
@@ -42,10 +42,10 @@ class InterviewDtoInitializer implements DtoInitializerInterface
         }
 
         /** @var Interview $entity */
-        $entity = $this->entityManager->getReference(Interview::class, $this->dto->getId());
+        $entity = $this->entityManager->find(Interview::class, $this->dto->getId());
 
         if (null === $entity) {
-            throw new \UnexpectedValueException('Can not receive an entity form repository to initialize a DTO object.');
+            throw new DtoIdentifierNotFoundException('Resource identifier not found in the database.');
         }
 
         $this->dto->setTrackerEnabled(false);

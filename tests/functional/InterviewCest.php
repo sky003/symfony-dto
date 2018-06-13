@@ -8,6 +8,12 @@ use App\DataFixtures\InterviewFixtureLoader;
 use App\Entity\Interview;
 use FunctionalTester;
 
+/**
+ * This is a really detailed test, because it's tests a JWT authentication and
+ * an abstract CRUD controller functionality. The next tests will be not so detailed.
+ *
+ * @author Anton Pelykh <anton.pelykh.dev@gmail.com>
+ */
 class InterviewCest
 {
     /**
@@ -193,6 +199,30 @@ class InterviewCest
         $I->seeResponseIsJson();
         $I->seeResponseContainsJson([
             'message' => 'You have no access to update the resource.',
+        ]);
+    }
+
+    public function testUpdateByNonExistingIdentifier(FunctionalTester $I): void
+    {
+        /** @var Interview $interview */
+        $interview = $this->fixture->getReference(InterviewFixtureLoader::REF_ENABLED_INTERVIEW, 1);
+
+        $data = [
+            'name' => 'Updated interview name.',
+        ];
+
+        $I->haveContentTypeJson();
+        $I->amBearerAuthenticated(
+            $I->createJwtToken([
+                'sub' => $interview->getUser()->getId(),
+            ])
+        );
+        $I->sendPUT('/interview/'.($interview->getId() + 1000), $data); // Currently we definitely haven't more then 1000 loaded interview fixtures.
+
+        $I->seeResponseCodeIs(404);
+        $I->seeResponseIsJson();
+        $I->seeResponseContainsJson([
+            'message' => 'Resource not found.',
         ]);
     }
 
