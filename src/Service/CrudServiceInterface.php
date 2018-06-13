@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace App\Service;
 
+use App\Entity\EntityResourceInterface;
 use App\Service\Exception\ResourceNotFoundException;
 use App\Service\Exception\ServiceException;
 use Doctrine\Common\Collections\Collection;
@@ -19,10 +20,10 @@ interface CrudServiceInterface
     /**
      * @param int $id
      *
-     * @return null|object
+     * @return null|EntityResourceInterface
      * @throws ServiceException
      */
-    public function get(int $id): ?object;
+    public function get(int $id): ?EntityResourceInterface;
 
     /**
      * @param Criteria $criteria
@@ -33,18 +34,18 @@ interface CrudServiceInterface
     public function getList(Criteria $criteria): Collection;
 
     /**
-     * @param object $entity
+     * @param EntityResourceInterface $entity
      *
      * @throws ServiceException
      */
-    public function create(object $entity): void;
+    public function create(EntityResourceInterface $entity): void;
 
     /**
-     * @param object $entity
+     * @param EntityResourceInterface $entity
      *
      * @throws ServiceException
      */
-    public function update(object $entity): void;
+    public function update(EntityResourceInterface $entity): void;
 
     /**
      * @param int $id

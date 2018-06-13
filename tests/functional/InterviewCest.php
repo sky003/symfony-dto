@@ -311,4 +311,68 @@ class InterviewCest
             'message' => 'You have no access to delete the resource.',
         ]);
     }
+
+    public function testGet(FunctionalTester $I): void
+    {
+        /** @var Interview $interview */
+        $interview = $this->fixture->getReference(InterviewFixtureLoader::REF_ENABLED_INTERVIEW, 4);
+
+        $I->haveContentTypeJson();
+        $I->amBearerAuthenticated(
+            $I->createJwtToken([
+                'sub' => $interview->getUser()->getId(),
+            ])
+        );
+        $I->sendGET('/interview/'.$interview->getId());
+
+        $I->seeResponseCodeIs(200);
+        $I->seeResponseIsJson();
+        $I->seeResponseContainsJson([
+            'id' => $interview->getId(),
+            'userId' => $interview->getUser()->getId(),
+            'name' => $interview->getName(),
+            'intro' => $interview->getIntro(),
+            'createdAt' => $interview->getCreatedAt()->format(DATE_ATOM),
+        ]);
+    }
+
+    public function testGetWithNonExistingIdentifier(FunctionalTester $I): void
+    {
+        /** @var Interview $interview */
+        $interview = $this->fixture->getReference(InterviewFixtureLoader::REF_ENABLED_INTERVIEW, 4);
+
+        $I->haveContentTypeJson();
+        $I->amBearerAuthenticated(
+            $I->createJwtToken([
+                'sub' => $interview->getUser()->getId(),
+            ])
+        );
+        $I->sendGET('/interview/'.($interview->getId() + 1000));
+
+        $I->seeResponseCodeIs(404);
+        $I->seeResponseIsJson();
+        $I->seeResponseContainsJson([
+            'message' => 'Resource not found.',
+        ]);
+    }
+
+    public function testGetWithoutAccessToGet(FunctionalTester $I): void
+    {
+        /** @var Interview $interview */
+        $interview = $this->fixture->getReference(InterviewFixtureLoader::REF_ENABLED_INTERVIEW, 1);
+
+        $I->haveContentTypeJson();
+        $I->amBearerAuthenticated(
+            $I->createJwtToken([
+                'sub' => $interview->getUser()->getId() + 1, // User that definitely haven't credentials to delete this entity.
+            ])
+        );
+        $I->sendGET('/interview/'.$interview->getId());
+
+        $I->seeResponseCodeIs(403);
+        $I->seeResponseIsJson();
+        $I->seeResponseContainsJson([
+            'message' => 'You have no access to get the resource.',
+        ]);
+    }
 }

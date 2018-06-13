@@ -120,7 +120,7 @@ abstract class AbstractCrudController extends Controller
     }
 
     /**
-     * Update a resource.
+     * Update a resource by its identifier.
      *
      * This action can handle PUT and PATCH update.
      *
@@ -176,7 +176,7 @@ abstract class AbstractCrudController extends Controller
     }
 
     /**
-     * Delete a resource.
+     * Delete a resource by its identifier.
      *
      * @param Request $request
      * @param int $id
@@ -204,6 +204,39 @@ abstract class AbstractCrudController extends Controller
         return new JsonResponse(
             null,
             Response::HTTP_NO_CONTENT
+        );
+    }
+
+    /**
+     * Get a resource by its identifier.
+     *
+     * @param Request $request
+     * @param int $id
+     *
+     * @return JsonResponse
+     */
+    public function getAction(Request $request, int $id): JsonResponse
+    {
+        $entity = $this->crudService->get($id);
+
+        if (null === $entity) {
+            throw new NotFoundHttpException('Resource not found.');
+        }
+
+        if (!$this->authorizationChecker->isGranted(AbstractCrudVoter::VIEW, $entity)) {
+            throw new AccessDeniedHttpException('You have no access to get the resource.');
+        }
+
+        $responseDto = $this->assemblerFactory->loadEntity($entity)->writeDto('v1');
+
+        return new JsonResponse(
+            $this->serializer->serialize(
+                $responseDto,
+                'json'
+            ),
+            Response::HTTP_OK,
+            [],
+            true
         );
     }
 }

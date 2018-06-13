@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace App\Service\Interview;
 
+use App\Entity\EntityResourceInterface;
 use App\Entity\Interview;
 use App\Service\CrudServiceInterface;
 use App\Service\Exception\ResourceNotFoundException;
@@ -36,11 +37,14 @@ class InterviewCrudService implements CrudServiceInterface
         $this->userIdentityService = $userIdentityService;
     }
 
-    public function get(int $id): ?object
+    public function get(int $id): ?EntityResourceInterface
     {
-        return $this->entityManager
+        /** @var Interview $interview */
+        $interview = $this->entityManager
             ->getRepository(Interview::class)
             ->find($id);
+
+        return $interview;
     }
 
     public function getList(Criteria $criteria): Collection
@@ -50,7 +54,7 @@ class InterviewCrudService implements CrudServiceInterface
         return new ArrayCollection();
     }
 
-    public function create(object $entity): void
+    public function create(EntityResourceInterface $entity): void
     {
         /** @var Interview $entity */
         $this->throwExceptionIfNotSupported($entity);
@@ -64,7 +68,7 @@ class InterviewCrudService implements CrudServiceInterface
         $this->entityManager->flush();
     }
 
-    public function update(object $entity): void
+    public function update(EntityResourceInterface $entity): void
     {
         /** @var Interview $entity */
         $this->throwExceptionIfNotSupported($entity);
