@@ -6,6 +6,7 @@ namespace App\Service\Interview;
 
 use App\Entity\Interview;
 use App\Service\CrudServiceInterface;
+use App\Service\Exception\ResourceNotFoundException;
 use App\Service\Security\UserIdentityServiceInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -37,9 +38,9 @@ class InterviewCrudService implements CrudServiceInterface
 
     public function get(int $id): ?object
     {
-        // TODO: Implement get() method.
-
-        return null;
+        return $this->entityManager
+            ->getRepository(Interview::class)
+            ->find($id);
     }
 
     public function getList(Criteria $criteria): Collection
@@ -74,7 +75,16 @@ class InterviewCrudService implements CrudServiceInterface
 
     public function delete(int $id): void
     {
-        // TODO: Implement delete() method.
+        $entity = $this->get($id);
+
+        if (null === $entity) {
+            throw new ResourceNotFoundException(
+                \sprintf('Interview with id #%d not found so tit can not be deleted.', $id)
+            );
+        }
+
+        $this->entityManager->remove($entity);
+        $this->entityManager->flush();
     }
 
     private function throwExceptionIfNotSupported(object $entity): void

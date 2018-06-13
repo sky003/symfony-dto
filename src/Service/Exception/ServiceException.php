@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service;
+namespace App\Service\Exception;
 
 /**
  * Root ServiceException to extend from.

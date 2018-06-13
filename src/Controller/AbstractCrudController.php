@@ -10,7 +10,7 @@ use App\Dto\Assembler\AssemblerFactoryInterface;
 use App\Dto\Assembler\Exception\DtoIdentifierNotFoundException;
 use App\Dto\Request\DtoResourceInterface;
 use App\Service\CrudServiceInterface;
-use App\Service\ServiceException;
+use App\Service\Exception\ServiceException;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -172,6 +172,38 @@ abstract class AbstractCrudController extends Controller
             Response::HTTP_OK,
             [],
             true
+        );
+    }
+
+    /**
+     * Delete a resource.
+     *
+     * @param Request $request
+     * @param int $id
+     *
+     * @return JsonResponse
+     */
+    public function deleteAction(Request $request, int $id): JsonResponse
+    {
+        $entity = $this->crudService->get($id);
+
+        if (null === $entity) {
+            throw new NotFoundHttpException('Resource not found.');
+        }
+
+        if (!$this->authorizationChecker->isGranted(AbstractCrudVoter::DELETE, $entity)) {
+            throw new AccessDeniedHttpException('You have no access to delete the resource.');
+        }
+
+        try {
+            $this->crudService->delete($id);
+        } catch (ServiceException $e) {
+            throw new HttpException(500, 'Error occurred while trying to delete the resource.');
+        }
+
+        return new JsonResponse(
+            null,
+            Response::HTTP_NO_CONTENT
         );
     }
 }

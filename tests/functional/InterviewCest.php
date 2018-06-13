@@ -202,7 +202,7 @@ class InterviewCest
         ]);
     }
 
-    public function testUpdateByNonExistingIdentifier(FunctionalTester $I): void
+    public function testUpdateWithNonExistingIdentifier(FunctionalTester $I): void
     {
         /** @var Interview $interview */
         $interview = $this->fixture->getReference(InterviewFixtureLoader::REF_ENABLED_INTERVIEW, 1);
@@ -253,6 +253,62 @@ class InterviewCest
                     'message' => 'This value should not be blank.',
                 ],
             ],
+        ]);
+    }
+
+    public function testDelete(FunctionalTester $I): void
+    {
+        /** @var Interview $interview */
+        $interview = $this->fixture->getReference(InterviewFixtureLoader::REF_ENABLED_INTERVIEW, 3);
+
+        $I->haveContentTypeJson();
+        $I->amBearerAuthenticated(
+            $I->createJwtToken([
+                'sub' => $interview->getUser()->getId(),
+            ])
+        );
+        $I->sendDELETE('/interview/'.$interview->getId());
+
+        $I->seeResponseCodeIs(204);
+    }
+
+    public function testDeleteWithNonExistingIdentifier(FunctionalTester $I): void
+    {
+        /** @var Interview $interview */
+        $interview = $this->fixture->getReference(InterviewFixtureLoader::REF_ENABLED_INTERVIEW, 4);
+
+        $I->haveContentTypeJson();
+        $I->amBearerAuthenticated(
+            $I->createJwtToken([
+                'sub' => $interview->getUser()->getId(),
+            ])
+        );
+        $I->sendDELETE('/interview/'.($interview->getId() + 1000));
+
+        $I->seeResponseCodeIs(404);
+        $I->seeResponseIsJson();
+        $I->seeResponseContainsJson([
+            'message' => 'Resource not found.',
+        ]);
+    }
+
+    public function testDeleteWithoutAccessToDelete(FunctionalTester $I): void
+    {
+        /** @var Interview $interview */
+        $interview = $this->fixture->getReference(InterviewFixtureLoader::REF_ENABLED_INTERVIEW, 1);
+
+        $I->haveContentTypeJson();
+        $I->amBearerAuthenticated(
+            $I->createJwtToken([
+                'sub' => $interview->getUser()->getId() + 1, // User that definitely haven't credentials to delete this entity.
+            ])
+        );
+        $I->sendDELETE('/interview/'.$interview->getId());
+
+        $I->seeResponseCodeIs(403);
+        $I->seeResponseIsJson();
+        $I->seeResponseContainsJson([
+            'message' => 'You have no access to delete the resource.',
         ]);
     }
 }
