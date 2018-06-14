@@ -14,7 +14,6 @@ RUN composer --version
 # Type docker-php-ext-install to see available extensions
 RUN docker-php-ext-install pdo pdo_mysql
 
-
 # install xdebug
 RUN pecl install xdebug
 RUN docker-php-ext-enable xdebug
@@ -29,4 +28,4 @@ RUN echo "xdebug.remote_port=9001" >> /usr/local/etc/php/conf.d/docker-php-ext-x
 
 RUN echo 'alias sf="php bin/console"' >> ~/.bashrc
 
-WORKDIR /var/www/vsapi
+WORKDIR /var/www/appapi
