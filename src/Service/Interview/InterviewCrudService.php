@@ -9,9 +9,9 @@ use App\Entity\Interview;
 use App\Service\CrudServiceInterface;
 use App\Service\Exception\ResourceNotFoundException;
 use App\Service\Security\UserIdentityServiceInterface;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
+use Doctrine\Common\Collections\Selectable;
 use Doctrine\ORM\EntityManagerInterface;
 
 class InterviewCrudService implements CrudServiceInterface
@@ -49,9 +49,20 @@ class InterviewCrudService implements CrudServiceInterface
 
     public function getList(Criteria $criteria): Collection
     {
-        // TODO: Implement getList() method.
+        $repository = $this->entityManager->getRepository(Interview::class);
 
-        return new ArrayCollection();
+        if (!$repository instanceof Selectable) {
+            throw new \LogicException(
+                sprintf('Repository must implement "%s" interface.', Selectable::class)
+            );
+        }
+
+        // Load all interviews of currently authenticated user only.
+        $user = $this->userIdentityService->getUser();
+        $criteria
+            ->where(Criteria::expr()->eq('user', $user));
+
+        return $repository->matching($criteria);
     }
 
     public function create(EntityResourceInterface $entity): void

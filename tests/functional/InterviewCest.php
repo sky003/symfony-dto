@@ -41,7 +41,7 @@ class InterviewCest
                 'sub' => $interview->getUser()->getId(),
             ])
         );
-        $I->sendPOST('/interview', $data);
+        $I->sendPOST('/interviews', $data);
 
         $I->seeResponseCodeIs(201);
         $I->seeResponseIsJson();
@@ -61,7 +61,7 @@ class InterviewCest
         ];
 
         $I->haveContentTypeJson();
-        $I->sendPOST('/interview', $data);
+        $I->sendPOST('/interviews', $data);
 
         $I->seeResponseCodeIs(401);
         $I->seeResponseIsJson();
@@ -82,7 +82,7 @@ class InterviewCest
                 'sub' => -1,
             ])
         );
-        $I->sendPOST('/interview', $data);
+        $I->sendPOST('/interviews', $data);
 
         $I->seeResponseCodeIs(401);
         $I->seeResponseIsJson();
@@ -106,7 +106,7 @@ class InterviewCest
                 'sub' => $interview->getUser()->getId(),
             ])
         );
-        $I->sendPOST('/interview', $data);
+        $I->sendPOST('/interviews', $data);
 
         $I->seeResponseCodeIs(422);
         $I->seeResponseIsJson();
@@ -135,7 +135,7 @@ class InterviewCest
                 'sub' => $interview->getUser()->getId(),
             ])
         );
-        $I->sendPUT('/interview/'.$interview->getId(), $data);
+        $I->sendPUT('/interviews/'.$interview->getId(), $data);
 
         $I->seeResponseCodeIs(200);
         $I->seeResponseIsJson();
@@ -164,7 +164,7 @@ class InterviewCest
                 'sub' => $interview->getUser()->getId(),
             ])
         );
-        $I->sendPUT('/interview/'.$interview->getId(), $data);
+        $I->sendPUT('/interviews/'.$interview->getId(), $data);
 
         $I->seeResponseCodeIs(200);
         $I->seeResponseIsJson();
@@ -193,7 +193,7 @@ class InterviewCest
                 'sub' => $interview->getUser()->getId() + 1, // User that definitely haven't credentials to update this entity.
             ])
         );
-        $I->sendPUT('/interview/'.$interview->getId(), $data);
+        $I->sendPUT('/interviews/'.$interview->getId(), $data);
 
         $I->seeResponseCodeIs(403);
         $I->seeResponseIsJson();
@@ -217,7 +217,7 @@ class InterviewCest
                 'sub' => $interview->getUser()->getId(),
             ])
         );
-        $I->sendPUT('/interview/'.($interview->getId() + 1000), $data); // Currently we definitely haven't more then 1000 loaded interview fixtures.
+        $I->sendPUT('/interviews/'.($interview->getId() + 1000), $data); // Currently we definitely haven't more then 1000 loaded interview fixtures.
 
         $I->seeResponseCodeIs(404);
         $I->seeResponseIsJson();
@@ -242,7 +242,7 @@ class InterviewCest
                 'sub' => $interview->getUser()->getId(),
             ])
         );
-        $I->sendPUT('/interview/'.$interview->getId(), $data);
+        $I->sendPUT('/interviews/'.$interview->getId(), $data);
 
         $I->seeResponseCodeIs(422);
         $I->seeResponseIsJson();
@@ -267,7 +267,7 @@ class InterviewCest
                 'sub' => $interview->getUser()->getId(),
             ])
         );
-        $I->sendDELETE('/interview/'.$interview->getId());
+        $I->sendDELETE('/interviews/'.$interview->getId());
 
         $I->seeResponseCodeIs(204);
     }
@@ -283,7 +283,7 @@ class InterviewCest
                 'sub' => $interview->getUser()->getId(),
             ])
         );
-        $I->sendDELETE('/interview/'.($interview->getId() + 1000));
+        $I->sendDELETE('/interviews/'.($interview->getId() + 1000));
 
         $I->seeResponseCodeIs(404);
         $I->seeResponseIsJson();
@@ -303,7 +303,7 @@ class InterviewCest
                 'sub' => $interview->getUser()->getId() + 1, // User that definitely haven't credentials to delete this entity.
             ])
         );
-        $I->sendDELETE('/interview/'.$interview->getId());
+        $I->sendDELETE('/interviews/'.$interview->getId());
 
         $I->seeResponseCodeIs(403);
         $I->seeResponseIsJson();
@@ -323,7 +323,7 @@ class InterviewCest
                 'sub' => $interview->getUser()->getId(),
             ])
         );
-        $I->sendGET('/interview/'.$interview->getId());
+        $I->sendGET('/interviews/'.$interview->getId());
 
         $I->seeResponseCodeIs(200);
         $I->seeResponseIsJson();
@@ -347,7 +347,7 @@ class InterviewCest
                 'sub' => $interview->getUser()->getId(),
             ])
         );
-        $I->sendGET('/interview/'.($interview->getId() + 1000));
+        $I->sendGET('/interviews/'.($interview->getId() + 1000));
 
         $I->seeResponseCodeIs(404);
         $I->seeResponseIsJson();
@@ -367,12 +367,67 @@ class InterviewCest
                 'sub' => $interview->getUser()->getId() + 1, // User that definitely haven't credentials to delete this entity.
             ])
         );
-        $I->sendGET('/interview/'.$interview->getId());
+        $I->sendGET('/interviews/'.$interview->getId());
 
         $I->seeResponseCodeIs(403);
         $I->seeResponseIsJson();
         $I->seeResponseContainsJson([
             'message' => 'You have no access to get the resource.',
+        ]);
+    }
+
+    public function testGetList(FunctionalTester $I): void
+    {
+        /** @var Interview $interview */
+        $interview = $this->fixture->getReference(InterviewFixtureLoader::REF_ENABLED_INTERVIEW, 1);
+        /** @var Interview $interview1 */
+        $interview1 = $this->fixture->getReference(InterviewFixtureLoader::REF_ENABLED_INTERVIEW1, 1);
+        /** @var Interview $interview2 */
+        $interview2 = $this->fixture->getReference(InterviewFixtureLoader::REF_ENABLED_INTERVIEW2, 1);
+
+        $I->haveContentTypeJson();
+        $I->amBearerAuthenticated(
+            $I->createJwtToken([
+                'sub' => $interview1->getUser()->getId(),
+            ])
+        );
+        $I->sendGET('/interviews?limit=2');
+
+        $I->seeResponseCodeIs(200);
+        $I->seeResponseIsJson();
+        $I->seeResponseContainsJson([
+            'offset' => 0,
+            'limit' => 2,
+            'total' => 3,
+            'embedded' => [
+                [
+                    'id' => $interview->getId(),
+                    'userId' => $interview->getUser()->getId(),
+                    'name' => $interview->getName(),
+                    'intro' => $interview->getIntro(),
+                    'createdAt' => $interview->getCreatedAt()->format(DATE_ATOM),
+                ],
+                [
+                    'id' => $interview1->getId(),
+                    'userId' => $interview1->getUser()->getId(),
+                    'name' => $interview1->getName(),
+                    'intro' => $interview1->getIntro(),
+                    'createdAt' => $interview1->getCreatedAt()->format(DATE_ATOM),
+                ],
+            ],
+        ]);
+        $I->dontSeeResponseContainsJson([
+            'embedded' => [
+                [
+                    [
+                        'id' => $interview2->getId(),
+                        'userId' => $interview2->getUser()->getId(),
+                        'name' => $interview2->getName(),
+                        'intro' => $interview2->getIntro(),
+                        'createdAt' => $interview2->getCreatedAt()->format(DATE_ATOM),
+                    ],
+                ],
+            ],
         ]);
     }
 }

@@ -9,8 +9,10 @@ use App\Component\Security\Core\Authorization\Voter\AbstractCrudVoter;
 use App\Dto\Assembler\AssemblerFactoryInterface;
 use App\Dto\Assembler\Exception\DtoIdentifierNotFoundException;
 use App\Dto\Request\DtoResourceInterface;
+use App\Dto\Response\PaginatedCollection;
 use App\Service\CrudServiceInterface;
 use App\Service\Exception\ServiceException;
+use Doctrine\Common\Collections\Criteria;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -232,6 +234,46 @@ abstract class AbstractCrudController extends Controller
         return new JsonResponse(
             $this->serializer->serialize(
                 $responseDto,
+                'json'
+            ),
+            Response::HTTP_OK,
+            [],
+            true
+        );
+    }
+
+    /**
+     * Get a list.
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function getListAction(Request $request): JsonResponse
+    {
+        $offset = $request->query->getInt('offset', 0);
+        $limit = $request->query->getInt('limit', 25);
+        $limit = $limit > 25 ? 25 : $limit; // Max limit is 25 embedded elements per request.
+
+        $criteria = Criteria::create()
+            ->setFirstResult($offset)
+            ->setMaxResults($limit);
+
+        try {
+            $collection = $this->crudService->getList($criteria);
+        } catch (ServiceException $e) {
+            throw new HttpException(500, 'Error occurred while trying to get list of the resources.');
+        }
+
+        $total = $collection->count();
+        $embedded = $collection->map(function ($entity) {
+            return $this->assemblerFactory->loadEntity($entity)->writeDto('v1');
+        });
+        $paginatedCollection = new PaginatedCollection($embedded, $offset, $limit, $total);
+
+        return new JsonResponse(
+            $this->serializer->serialize(
+                $paginatedCollection,
                 'json'
             ),
             Response::HTTP_OK,

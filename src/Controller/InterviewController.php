@@ -28,9 +28,9 @@ class InterviewController extends AbstractCrudController
      * @return JsonResponse
      *
      * @Route(
-     *     path="/interview",
+     *     path="/interviews",
      *     methods={"POST"},
-     *     name="interview/create"
+     *     name="interviews/create"
      * )
      */
     public function createAction(Request $request): JsonResponse
@@ -45,10 +45,10 @@ class InterviewController extends AbstractCrudController
      * @return JsonResponse
      *
      * @Route(
-     *     path="/interview/{id}",
+     *     path="/interviews/{id}",
      *     requirements={"id"="\d+"},
      *     methods={"PUT"},
-     *     name="interview/update",
+     *     name="interviews/update",
      * )
      */
     public function updateAction(Request $request, int $id): JsonResponse
@@ -63,10 +63,10 @@ class InterviewController extends AbstractCrudController
      * @return JsonResponse
      *
      * @Route(
-     *     path="/interview/{id}",
+     *     path="/interviews/{id}",
      *     requirements={"id"="\d+"},
      *     methods={"DELETE"},
-     *     name="interview/delete",
+     *     name="interviews/delete",
      * )
      */
     public function deleteAction(Request $request, int $id): JsonResponse
@@ -81,14 +81,31 @@ class InterviewController extends AbstractCrudController
      * @return JsonResponse
      *
      * @Route(
-     *     path="/interview/{id}",
+     *     path="/interviews/{id}",
      *     requirements={"id"="\d+"},
      *     methods={"GET"},
-     *     name="interview/get",
+     *     name="interviews/get",
      * )
      */
     public function getAction(Request $request, int $id): JsonResponse
     {
         return parent::getAction($request, $id);
+    }
+
+    /**
+     * @param Request $request
+     *
+     * @return JsonResponse
+     *
+     * @Route(
+     *     path="/interviews",
+     *     requirements={"id"="\d+"},
+     *     methods={"GET"},
+     *     name="interviews/getList",
+     * )
+     */
+    public function getListAction(Request $request): JsonResponse
+    {
+        return parent::getListAction($request);
     }
 }

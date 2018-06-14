@@ -13,6 +13,8 @@ use Doctrine\Common\Persistence\ObjectManager;
 class InterviewFixtureLoader extends AbstractFixture implements DependentFixtureInterface
 {
     public const REF_ENABLED_INTERVIEW = 'ENABLED_INTERVIEW';
+    public const REF_ENABLED_INTERVIEW1 = 'ENABLED_INTERVIEW1';
+    public const REF_ENABLED_INTERVIEW2 = 'ENABLED_INTERVIEW2';
 
     /**
      * {@inheritdoc}
@@ -30,6 +32,8 @@ class InterviewFixtureLoader extends AbstractFixture implements DependentFixture
     public function load(ObjectManager $manager): void
     {
         $this->loadWithReference($manager, self::REF_ENABLED_INTERVIEW);
+        $this->loadWithReference($manager, self::REF_ENABLED_INTERVIEW1);
+        $this->loadWithReference($manager, self::REF_ENABLED_INTERVIEW2);
     }
 
     private function loadWithReference(ObjectManager $manager, string $ref): void
@@ -45,6 +49,8 @@ class InterviewFixtureLoader extends AbstractFixture implements DependentFixture
                 ->setUpdatedAt($faker->dateTimeBetween($interview->getCreatedAt(), 'now'));
             switch ($ref) {
                 case self::REF_ENABLED_INTERVIEW:
+                case self::REF_ENABLED_INTERVIEW1:
+                case self::REF_ENABLED_INTERVIEW2:
                     /** @var User $user */
                     $user = $this->getReference(UserFixtureLoader::REF_ENABLED_INTERVIEWER, $i);
 
