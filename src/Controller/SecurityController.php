@@ -7,7 +7,7 @@ namespace App\Controller;
 use App\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use App\Component\Security\Core\User\UserInterface;
 use App\Dto\Assembler\Token\TokenDtoAssembler;
-use App\Dto\Assembler\UserAssembler;
+use App\Dto\Assembler\User\UserAssembler;
 use App\Dto\Request\EmailVerificationToken;
 use App\Dto\Request\RegistrationEmailPassword;
 use App\Service\Security\SecurityServiceInterface;

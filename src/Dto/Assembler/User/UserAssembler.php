@@ -2,7 +2,7 @@
 
 declare(strict_types = 1);
 
-namespace App\Dto\Assembler;
+namespace App\Dto\Assembler\User;
 
 use App\Entity\User;
 use App\Dto\Response;
