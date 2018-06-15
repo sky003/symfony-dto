@@ -4,11 +4,11 @@ declare(strict_types = 1);
 
 namespace App\Dto\Assembler;
 
-use App\Dto\Assembler\Interview\InterviewDtoInitializer;
+use App\Dto\Assembler\Interview\InterviewDtoNormalizer;
 use App\Dto\Request;
 use Doctrine\ORM\EntityManagerInterface;
 
-class DtoInitializerFactory implements DtoInitializerFactoryInterface
+class DtoNormalizerFactory implements DtoNormalizerFactoryInterface
 {
     /**
      * @var EntityManagerInterface
@@ -20,10 +20,10 @@ class DtoInitializerFactory implements DtoInitializerFactoryInterface
         $this->entityManager = $entityManager;
     }
 
-    public function getDtoInitializer(Request\DtoResourceInterface $dto): DtoInitializerInterface
+    public function getDtoInitializer(Request\DtoResourceInterface $dto): DtoNormalizerInterface
     {
         if ($dto instanceof Request\Interview) {
-            return new InterviewDtoInitializer($dto, $this->entityManager);
+            return new InterviewDtoNormalizer($dto, $this->entityManager);
         }
 
         throw new \LogicException('Unable to find an initializer for the entity you provide.');

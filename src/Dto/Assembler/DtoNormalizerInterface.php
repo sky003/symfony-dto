@@ -11,7 +11,7 @@ use App\Dto\Request;
  *
  * @author Anton Pelykh <anton.pelykh.dev@gmail.com>
  */
-interface DtoInitializerInterface
+interface DtoNormalizerInterface
 {
     /**
      * Initializes a DTO object.

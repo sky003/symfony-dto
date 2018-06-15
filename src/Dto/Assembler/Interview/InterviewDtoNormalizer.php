@@ -4,13 +4,13 @@ declare(strict_types = 1);
 
 namespace App\Dto\Assembler\Interview;
 
-use App\Dto\Assembler\DtoInitializerInterface;
+use App\Dto\Assembler\DtoNormalizerInterface;
 use App\Dto\Assembler\Exception\DtoIdentifierNotFoundException;
 use App\Dto\Request;
 use App\Entity\Interview;
 use Doctrine\ORM\EntityManagerInterface;
 
-class InterviewDtoInitializer implements DtoInitializerInterface
+class InterviewDtoNormalizer implements DtoNormalizerInterface
 {
     /**
      * @var Request\Interview

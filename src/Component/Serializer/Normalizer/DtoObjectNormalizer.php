@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace App\Component\Serializer\Normalizer;
 
-use App\Dto\Assembler\DtoInitializerFactoryInterface;
+use App\Dto\Assembler\DtoNormalizerFactoryInterface;
 use App\Dto\Request\DtoResourceInterface;
 use Symfony\Component\PropertyInfo\PropertyTypeExtractorInterface;
 use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactoryInterface;
@@ -19,15 +19,15 @@ use Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer;
 class DtoObjectNormalizer extends GetSetMethodNormalizer
 {
     /**
-     * @var DtoInitializerFactoryInterface
+     * @var DtoNormalizerFactoryInterface
      */
-    private $dtoInitializerFactory;
+    private $dtoNormalizerFactory;
 
-    public function __construct(ClassMetadataFactoryInterface $classMetadataFactory = null, NameConverterInterface $nameConverter = null, PropertyTypeExtractorInterface $propertyTypeExtractor = null, DtoInitializerFactoryInterface $dtoInitializerFactory)
+    public function __construct(ClassMetadataFactoryInterface $classMetadataFactory = null, NameConverterInterface $nameConverter = null, PropertyTypeExtractorInterface $propertyTypeExtractor = null, DtoNormalizerFactoryInterface $dtoNormalizerFactory)
     {
         parent::__construct($classMetadataFactory, $nameConverter, $propertyTypeExtractor);
 
-        $this->dtoInitializerFactory = $dtoInitializerFactory;
+        $this->dtoNormalizerFactory = $dtoNormalizerFactory;
     }
 
     /**
@@ -52,6 +52,6 @@ class DtoObjectNormalizer extends GetSetMethodNormalizer
 
         $object->setId((int) $context['dto_id']);
 
-        return $this->dtoInitializerFactory->getDtoInitializer($object)->initializeDto();
+        return $this->dtoNormalizerFactory->getDtoInitializer($object)->initializeDto();
     }
 }
