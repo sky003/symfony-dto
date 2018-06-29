@@ -6,7 +6,9 @@ cache:
 
 before_script:
   - apt-get update -yqq
-  - apt-get install git unzip -yqq
+  - apt-get install zlib1g-dev git unzip -yqq
+
+  - docker-php-ext-install zip
 
   - curl -sS https://getcomposer.org/installer | php
 
