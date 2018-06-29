@@ -20,4 +20,5 @@ test:unit:
 
 test:functional:
   script:
+    - bin/console doctrine:schema:create
     - vendor/bin/codecept run functional
