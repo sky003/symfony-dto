@@ -6,7 +6,7 @@ cache:
 
 before_script:
   - apt-get update -yqq
-  - apt-get install git -yqq
+  - apt-get install git unzip -yqq
 
   - curl -sS https://getcomposer.org/installer | php
 
