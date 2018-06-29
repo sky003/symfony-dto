@@ -8,8 +8,7 @@ before_script:
   - apt-get update -yqq
   - apt-get install zlib1g-dev libsqlite3-dev git unzip -yqq
 
-  - docker-php-ext-install zip
-  - docker-php-ext-enable pdo pdo_sqlite
+  - docker-php-ext-install zip pdo pdo_sqlite
 
   - curl -sS https://getcomposer.org/installer | php
 
@@ -21,5 +20,5 @@ test:unit:
 
 test:functional:
   script:
-    - bin/console doctrine:schema:create
+    - bin/console doctrine:schema:create --env=test
     - vendor/bin/codecept run functional
