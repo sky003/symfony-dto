@@ -1,0 +1,21 @@
+image: php:7.2-cli
+
+cache:
+  paths:
+    - vendor/
+
+before_script:
+  - apt-get update -yqq
+  - apt-get install git -yqq
+
+  - curl -sS https://getcomposer.org/installer | php
+
+  - php composer.phar install
+
+test:unit:
+  script:
+    - vendor/bin/codecept run unit
+
+test:functional:
+  script:
+    - vendor/bin/codecept run functional
