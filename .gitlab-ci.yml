@@ -8,7 +8,7 @@ before_script:
   - apt-get update -yqq
   - apt-get install zlib1g-dev git unzip -yqq
 
-  - docker-php-ext-install zip
+  - docker-php-ext-install zip pdo pdo_sqlite3
 
   - curl -sS https://getcomposer.org/installer | php
 
