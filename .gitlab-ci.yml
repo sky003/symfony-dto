@@ -9,7 +9,7 @@ before_script:
   - apt-get install zlib1g-dev libsqlite3-dev git unzip -yqq
 
   - docker-php-ext-install zip
-  - docker-php-ext-enable sqlite3 pdo pdo_sqlite
+  - docker-php-ext-enable pdo pdo_sqlite
 
   - curl -sS https://getcomposer.org/installer | php
 
