@@ -1,5 +1,8 @@
 image: php:7.2-cli
 
+stages:
+  - test
+
 cache:
   paths:
     - vendor/
@@ -15,10 +18,12 @@ before_script:
   - php composer.phar install
 
 test:unit:
+  stage: test
   script:
     - vendor/bin/codecept run unit
 
 test:functional:
+  stage: test
   script:
     - bin/console doctrine:schema:create --env=test
     - vendor/bin/codecept run functional
